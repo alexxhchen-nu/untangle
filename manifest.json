@@ -1,0 +1,11 @@
+{
+	"id": "archaeo-doc-parser",
+	"name": "Archaeo Doc Parser",
+	"version": "0.1.0",
+	"minAppVersion": "1.0.0",
+	"description": "Parse archaeological documents (PDF, images, Office) to Markdown via MinerU cloud API. OCR for scanned docs, Chinese text support.",
+	"author": "Xiaohan Chen",
+	"authorUrl": "https://github.com/alexxhchen-nu",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
