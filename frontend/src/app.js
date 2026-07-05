@@ -11,9 +11,11 @@ const elements = {
   sidebarToggle: document.querySelector("#sidebarToggle"),
   searchInput: document.querySelector("#searchInput"),
   filters: [...document.querySelectorAll(".filter")],
+  seriesChip: document.querySelector("#seriesChip"),
+  seriesMenu: document.querySelector("#seriesMenu"),
+  seriesOptions: [...document.querySelectorAll(".series-option")],
   bookList: document.querySelector("#bookList"),
   emptyState: document.querySelector("#emptyState"),
-  activeLabel: document.querySelector("#activeLabel"),
 };
 
 const seriesLabels = {
@@ -44,6 +46,13 @@ async function init() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       setSidebarOpen(false);
+      setSeriesMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".series-picker")) {
+      setSeriesMenuOpen(false);
     }
   });
 
@@ -54,9 +63,18 @@ async function init() {
 
   elements.filters.forEach((button) => {
     button.addEventListener("click", () => {
-      state.series = button.dataset.series;
-      elements.filters.forEach((item) => item.classList.toggle("is-active", item === button));
-      render();
+      setSeries(button.dataset.series);
+    });
+  });
+
+  elements.seriesChip.addEventListener("click", () => {
+    setSeriesMenuOpen(elements.seriesMenu.hidden);
+  });
+
+  elements.seriesOptions.forEach((button) => {
+    button.addEventListener("click", () => {
+      setSeries(button.dataset.series);
+      setSeriesMenuOpen(false);
     });
   });
 
@@ -83,10 +101,23 @@ function render() {
     }
   });
 
-  elements.activeLabel.textContent = seriesLabels[state.series];
+  elements.seriesChip.textContent = seriesLabels[state.series];
+  elements.seriesChip.dataset.series = state.series;
+  elements.filters.forEach((item) => item.classList.toggle("is-active", item.dataset.series === state.series));
+  elements.seriesOptions.forEach((item) => item.classList.toggle("is-active", item.dataset.series === state.series));
   elements.emptyState.hidden = visibleBooks.length > 0;
 
   elements.bookList.replaceChildren(...visibleBooks.map(createBookRow));
+}
+
+function setSeries(series) {
+  state.series = series;
+  render();
+}
+
+function setSeriesMenuOpen(isOpen) {
+  elements.seriesMenu.hidden = !isOpen;
+  elements.seriesChip.setAttribute("aria-expanded", String(isOpen));
 }
 
 function setSidebarOpen(isOpen) {
@@ -98,6 +129,7 @@ function createBookRow(book) {
   const isOpen = state.openIds.has(book.id);
   const row = document.createElement("div");
   row.className = "book-row";
+  row.dataset.series = book.series;
   row.classList.toggle("is-expanded", isOpen);
 
   const button = document.createElement("button");
