@@ -1,0 +1,66 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+
+env:
+  SSH_HOST: 154.12.89.148
+  SSH_PORT: 9146
+  SSH_USER: root
+  REMOTE_DIR: /var/www/vps-kaogu-app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes
+        id: changes
+        run: |
+          FRONTEND=$(git diff --name-only HEAD~1 HEAD -- frontend/ | wc -l)
+          BACKEND=$(git diff --name-only HEAD~1 HEAD -- backend/ | wc -l)
+          echo "frontend=$FRONTEND" >> $GITHUB_OUTPUT
+          echo "backend=$BACKEND" >> $GITHUB_OUTPUT
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ env.SSH_PORT }} ${{ env.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to server
+        run: |
+          SSH_CMD="ssh -i ~/.ssh/deploy_key -p ${{ env.SSH_PORT }} ${{ env.SSH_USER }}@${{ env.SSH_HOST }}"
+
+          # Sync files
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ env.SSH_PORT }}" \
+            --exclude node_modules --exclude dist --exclude __pycache__ --exclude venv --exclude .git \
+            ./ ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:${{ env.REMOTE_DIR }}/
+
+          # Frontend: install + build
+          if [ "${{ steps.changes.outputs.frontend }}" -gt 0 ]; then
+            echo "Frontend changed, rebuilding..."
+            $SSH_CMD "cd ${{ env.REMOTE_DIR }}/frontend && npm install && npm run build"
+          fi
+
+          # Backend: install deps + restart
+          if [ "${{ steps.changes.outputs.backend }}" -gt 0 ]; then
+            echo "Backend changed, restarting..."
+            $SSH_CMD "cd ${{ env.REMOTE_DIR }}/backend && source venv/bin/activate && pip install -r requirements.txt && systemctl restart kaogu-backend"
+          else
+            # Always restart backend to pick up new code
+            $SSH_CMD "systemctl restart kaogu-backend"
+          fi
+
+      - name: Verify deployment
+        run: |
+          sleep 3
+          curl -sf "http://${{ env.SSH_HOST }}/kaogu/api/health" || exit 1
+          echo "Deployment verified!"
