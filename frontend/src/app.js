@@ -16,9 +16,9 @@ const elements = {
   activeLabel: document.querySelector("#activeLabel"),
   readerSeries: document.querySelector("#readerSeries"),
   readerTitle: document.querySelector("#readerTitle"),
-  openPdf: document.querySelector("#openPdf"),
-  pdfFrame: document.querySelector("#pdfFrame"),
-  readerBlank: document.querySelector("#readerBlank"),
+  downloadNote: document.querySelector("#downloadNote"),
+  downloadMarkdown: document.querySelector("#downloadMarkdown"),
+  downloadPdf: document.querySelector("#downloadPdf"),
 };
 
 const seriesLabels = {
@@ -37,6 +37,7 @@ async function init() {
   state.books = data.books.map((book) => ({
     ...book,
     pdfUrl: book.pdfUrl || `${data.pdfBaseUrl}${book.filename}`,
+    markdownUrl: book.markdownUrl || buildOptionalUrl(data.markdownBaseUrl, book.markdownFilename),
   }));
   state.selectedId = state.books[0]?.id || null;
 
@@ -107,10 +108,6 @@ function createBookButton(book) {
     render();
   });
 
-  const code = document.createElement("span");
-  code.className = "book-code";
-  code.textContent = book.id;
-
   const title = document.createElement("strong");
   title.textContent = book.title;
 
@@ -118,43 +115,60 @@ function createBookButton(book) {
   meta.className = "book-meta";
   meta.textContent = [seriesLabels[book.series], book.filename].filter(Boolean).join(" / ");
 
-  button.append(code, title, meta);
+  button.append(title, meta);
   return button;
 }
 
 function renderReader(book) {
-  const hasBook = Boolean(book);
-  const canOpenPdf = hasBook && isUsablePdfUrl(book.pdfUrl);
-
-  elements.readerBlank.hidden = canOpenPdf;
-  elements.pdfFrame.hidden = !canOpenPdf;
-  elements.openPdf.classList.toggle("is-disabled", !canOpenPdf);
-
   if (!book) {
     elements.readerSeries.textContent = "请选择文献";
-    elements.readerTitle.textContent = "从目录中选择 PDF";
-    elements.openPdf.removeAttribute("href");
-    elements.pdfFrame.removeAttribute("src");
-    elements.readerBlank.querySelector("strong").textContent = "尚未选择文献";
-    elements.readerBlank.querySelector("span").textContent = "请在目录中检索或筛选，然后选择一篇 PDF 预览。";
+    elements.readerTitle.textContent = "从目录中选择文献";
+    elements.downloadNote.textContent = "请先从目录中选择一项文献。";
+    setDownloadLink(elements.downloadMarkdown, null);
+    setDownloadLink(elements.downloadPdf, null);
     return;
   }
 
   elements.readerSeries.textContent = seriesLabels[book.series];
-  elements.readerTitle.textContent = book.title;
-  elements.readerBlank.querySelector("strong").textContent = "PDF 地址尚未配置";
-  elements.readerBlank.querySelector("span").textContent = "请在 data/catalog.json 中把 pdfBaseUrl 改为 Bunny CDN 域名。";
+  elements.readerTitle.textContent = getReaderTitle(book);
+  elements.readerTitle.title = book.title;
+  elements.downloadNote.textContent = "可下载 OCR 文本与 PDF 原文。";
 
-  if (canOpenPdf) {
-    elements.openPdf.href = book.pdfUrl;
-    elements.pdfFrame.src = book.pdfUrl;
+  setDownloadLink(elements.downloadMarkdown, book.markdownUrl);
+  setDownloadLink(elements.downloadPdf, book.pdfUrl);
+}
+
+function buildOptionalUrl(baseUrl, filename) {
+  return baseUrl && filename ? `${baseUrl}${filename}` : "";
+}
+
+function getReaderTitle(book) {
+  const number = book.id?.match(/\d+$/)?.[0];
+  if (book.series === "nsbd" && number) {
+    return `南水北调${number}`;
+  }
+  if (book.series === "hebei" && number) {
+    return `河北${number}`;
+  }
+  return book.title;
+}
+
+function setDownloadLink(element, url) {
+  const isUsable = isUsableUrl(url);
+  element.classList.toggle("is-disabled", !isUsable);
+
+  if (isUsable) {
+    element.href = url;
+    element.removeAttribute("aria-disabled");
+    element.removeAttribute("tabindex");
   } else {
-    elements.openPdf.removeAttribute("href");
-    elements.pdfFrame.removeAttribute("src");
+    element.removeAttribute("href");
+    element.setAttribute("aria-disabled", "true");
+    element.setAttribute("tabindex", "-1");
   }
 }
 
-function isUsablePdfUrl(url) {
+function isUsableUrl(url) {
   return Boolean(url) && !url.includes("YOUR-BUNNY-CDN-HOSTNAME");
 }
 
