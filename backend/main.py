@@ -17,8 +17,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS — allow Netlify frontend and local dev
+# CORS — allow production frontend and local dev
 ALLOWED_ORIGINS = [
+    "https://kaogu.xiaohanchen.cc",
     "https://kaogu.app",
     "https://kaogu-parser.netlify.app",
     "https://*.netlify.app",

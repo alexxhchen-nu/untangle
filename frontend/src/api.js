@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || '/kaogu';
 
 export async function parseReport(file, reportName = '') {
   const formData = new FormData();
