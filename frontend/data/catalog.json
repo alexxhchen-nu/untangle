@@ -1,6 +1,7 @@
 {
   "pdfBaseUrl": "https://xiaohanchen.b-cdn.net/南水北调+河北_pdf/",
   "markdownBaseUrl": "https://xiaohanchen.b-cdn.net/md_解析结果/",
+  "csvBaseUrl": "https://xiaohanchen.b-cdn.net/解析结果_csv/",
   "books": [
     {
       "id": "nsbd-2",

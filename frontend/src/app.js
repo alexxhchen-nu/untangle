@@ -14,11 +14,6 @@ const elements = {
   bookList: document.querySelector("#bookList"),
   emptyState: document.querySelector("#emptyState"),
   activeLabel: document.querySelector("#activeLabel"),
-  readerSeries: document.querySelector("#readerSeries"),
-  readerTitle: document.querySelector("#readerTitle"),
-  downloadNote: document.querySelector("#downloadNote"),
-  downloadMarkdown: document.querySelector("#downloadMarkdown"),
-  downloadPdf: document.querySelector("#downloadPdf"),
 };
 
 const seriesLabels = {
@@ -38,8 +33,8 @@ async function init() {
     ...book,
     pdfUrl: book.pdfUrl || `${data.pdfBaseUrl}${book.filename}`,
     markdownUrl: book.markdownUrl || buildOptionalUrl(data.markdownBaseUrl, book.markdownFilename),
+    csvUrl: book.csvUrl || buildOptionalUrl(data.csvBaseUrl, book.csvFilename || `${book.id}.csv`),
   }));
-  state.selectedId = state.books[0]?.id || null;
 
   elements.sidebarToggle.addEventListener("click", () => {
     const shouldOpen = document.body.classList.contains("is-sidebar-collapsed");
@@ -82,14 +77,13 @@ function getVisibleBooks() {
 function render() {
   const visibleBooks = getVisibleBooks();
   if (!visibleBooks.some((book) => book.id === state.selectedId)) {
-    state.selectedId = visibleBooks[0]?.id || null;
+    state.selectedId = null;
   }
 
   elements.activeLabel.textContent = seriesLabels[state.series];
   elements.emptyState.hidden = visibleBooks.length > 0;
 
-  elements.bookList.replaceChildren(...visibleBooks.map(createBookButton));
-  renderReader(visibleBooks.find((book) => book.id === state.selectedId));
+  elements.bookList.replaceChildren(...visibleBooks.map(createBookRow));
 }
 
 function setSidebarOpen(isOpen) {
@@ -97,14 +91,19 @@ function setSidebarOpen(isOpen) {
   elements.sidebarToggle.setAttribute("aria-expanded", String(isOpen));
 }
 
-function createBookButton(book) {
+function createBookRow(book) {
+  const row = document.createElement("div");
+  row.className = "book-row";
+  row.classList.toggle("is-expanded", book.id === state.selectedId);
+
   const button = document.createElement("button");
   button.className = "book-card";
   button.type = "button";
   button.dataset.id = book.id;
+  button.setAttribute("aria-expanded", String(book.id === state.selectedId));
   button.classList.toggle("is-selected", book.id === state.selectedId);
   button.addEventListener("click", () => {
-    state.selectedId = book.id;
+    state.selectedId = state.selectedId === book.id ? null : book.id;
     render();
   });
 
@@ -115,57 +114,53 @@ function createBookButton(book) {
   meta.className = "book-meta";
   meta.textContent = [seriesLabels[book.series], book.filename].filter(Boolean).join(" / ");
 
+  const node = document.createElement("span");
+  node.className = "book-node";
+  node.setAttribute("aria-hidden", "true");
+
+  const actions = document.createElement("div");
+  actions.className = "book-actions";
+  actions.setAttribute("aria-label", `${book.title} 下载选项`);
+  actions.hidden = book.id !== state.selectedId;
+  actions.append(
+    createActionLink("下载 PDF 原文", book.pdfUrl),
+    createActionDivider(),
+    createActionLink("解析结果(.md)", book.markdownUrl),
+    createActionLink("解析数据(.csv)", book.csvUrl),
+  );
+
   button.append(title, meta);
-  return button;
-}
-
-function renderReader(book) {
-  if (!book) {
-    elements.readerSeries.textContent = "请选择文献";
-    elements.readerTitle.textContent = "从目录中选择文献";
-    elements.downloadNote.textContent = "请先从目录中选择一项文献。";
-    setDownloadLink(elements.downloadMarkdown, null);
-    setDownloadLink(elements.downloadPdf, null);
-    return;
-  }
-
-  elements.readerSeries.textContent = seriesLabels[book.series];
-  elements.readerTitle.textContent = getReaderTitle(book);
-  elements.readerTitle.title = book.title;
-  elements.downloadNote.textContent = "可下载 OCR 文本与 PDF 原文。";
-
-  setDownloadLink(elements.downloadMarkdown, book.markdownUrl);
-  setDownloadLink(elements.downloadPdf, book.pdfUrl);
+  row.append(button, node, actions);
+  return row;
 }
 
 function buildOptionalUrl(baseUrl, filename) {
   return baseUrl && filename ? `${baseUrl}${filename}` : "";
 }
 
-function getReaderTitle(book) {
-  const number = book.id?.match(/\d+$/)?.[0];
-  if (book.series === "nsbd" && number) {
-    return `南水北调${number}`;
+function createActionLink(label, url) {
+  const link = document.createElement("a");
+  link.className = "action-link";
+  link.textContent = label;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+
+  if (isUsableUrl(url)) {
+    link.href = url;
+  } else {
+    link.classList.add("is-disabled");
+    link.setAttribute("aria-disabled", "true");
+    link.setAttribute("tabindex", "-1");
   }
-  if (book.series === "hebei" && number) {
-    return `河北${number}`;
-  }
-  return book.title;
+
+  return link;
 }
 
-function setDownloadLink(element, url) {
-  const isUsable = isUsableUrl(url);
-  element.classList.toggle("is-disabled", !isUsable);
-
-  if (isUsable) {
-    element.href = url;
-    element.removeAttribute("aria-disabled");
-    element.removeAttribute("tabindex");
-  } else {
-    element.removeAttribute("href");
-    element.setAttribute("aria-disabled", "true");
-    element.setAttribute("tabindex", "-1");
-  }
+function createActionDivider() {
+  const divider = document.createElement("span");
+  divider.className = "action-divider";
+  divider.setAttribute("aria-hidden", "true");
+  return divider;
 }
 
 function isUsableUrl(url) {
