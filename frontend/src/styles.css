@@ -189,7 +189,8 @@ h1 {
   gap: 20px;
   padding: 20px;
   margin-left: calc(var(--sidebar-width) + 54px);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   transition: margin-left 180ms ease;
 }
 
@@ -206,6 +207,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 0;
 }
 
 .section-heading {
@@ -225,6 +227,7 @@ h1 {
 .book-list {
   display: grid;
   gap: 10px;
+  min-height: 0;
   overflow: auto;
   padding-right: 4px;
 }
@@ -264,9 +267,13 @@ h1 {
 }
 
 .reader {
+  position: sticky;
+  top: 20px;
   display: grid;
-  grid-template-rows: auto minmax(360px, 1fr);
+  grid-template-rows: auto auto;
   gap: 16px;
+  height: calc(100vh - 40px);
+  min-height: 0;
 }
 
 .reader-toolbar {
@@ -305,13 +312,32 @@ h1 {
 }
 
 .download-panel {
+  position: relative;
   display: grid;
   align-content: start;
   gap: 24px;
-  min-height: 360px;
+  align-self: start;
+  height: clamp(520px, calc(100vh - 252px), 880px);
+  min-height: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: clamp(22px, 4vw, 44px);
+  overflow: hidden;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 18px),
+    94% calc(100% - 10px),
+    86% calc(100% - 19px),
+    76% calc(100% - 8px),
+    64% calc(100% - 17px),
+    52% calc(100% - 10px),
+    39% calc(100% - 18px),
+    29% calc(100% - 9px),
+    18% calc(100% - 16px),
+    8% calc(100% - 8px),
+    0 calc(100% - 18px)
+  );
   background:
     linear-gradient(90deg, rgba(35, 32, 26, 0.05) 1px, transparent 1px),
     linear-gradient(rgba(35, 32, 26, 0.05) 1px, transparent 1px),
@@ -384,12 +410,21 @@ h1 {
 
   .workspace {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
     margin-left: 54px;
+    overflow: visible;
   }
 
   .book-list {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     overflow: visible;
+  }
+
+  .reader {
+    position: static;
+    height: auto;
+    grid-template-rows: auto auto;
   }
 }
 
