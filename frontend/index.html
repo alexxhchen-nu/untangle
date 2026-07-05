@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lib Xiaohanchen</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Library controls">
+        <div class="brand">
+          <p class="brand-kicker">PDF Library</p>
+          <h1>Lib Xiaohanchen</h1>
+        </div>
+
+        <label class="search-field">
+          <span>Search catalogue</span>
+          <input id="searchInput" type="search" placeholder="Title, series, filename" autocomplete="off" />
+        </label>
+
+        <div class="filters" aria-label="Series filter">
+          <button class="filter is-active" type="button" data-series="all">All</button>
+          <button class="filter" type="button" data-series="nsbd">南水北调</button>
+          <button class="filter" type="button" data-series="hebei">河北</button>
+        </div>
+
+        <div class="library-stat">
+          <span id="visibleCount">0</span>
+          <small>documents available</small>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="catalogue" aria-label="PDF catalogue">
+          <div class="section-heading">
+            <p>Catalogue</p>
+            <span id="activeLabel">All series</span>
+          </div>
+          <div id="bookList" class="book-list"></div>
+          <p id="emptyState" class="empty-state" hidden>No documents match this search.</p>
+        </section>
+
+        <section class="reader" aria-label="PDF viewer">
+          <div class="reader-toolbar">
+            <div>
+              <p id="readerSeries" class="reader-series">Select a document</p>
+              <h2 id="readerTitle">Choose a PDF from the catalogue</h2>
+            </div>
+            <a id="openPdf" class="open-link is-disabled" href="#" target="_blank" rel="noreferrer">Open PDF</a>
+          </div>
+
+          <div class="viewer-frame">
+            <iframe id="pdfFrame" title="PDF preview"></iframe>
+            <div id="readerBlank" class="reader-blank">
+              <strong>No document selected</strong>
+              <span>Search or filter the catalogue, then select a title to preview it here.</span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
