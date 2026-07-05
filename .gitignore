@@ -13,3 +13,6 @@ all_pdf/
 node_modules/
 dist/
 build/
+
+# bunny-tools
+.bunny-state.json

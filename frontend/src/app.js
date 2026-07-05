@@ -8,11 +8,11 @@ const state = {
 };
 
 const elements = {
+  sidebarToggle: document.querySelector("#sidebarToggle"),
   searchInput: document.querySelector("#searchInput"),
   filters: [...document.querySelectorAll(".filter")],
   bookList: document.querySelector("#bookList"),
   emptyState: document.querySelector("#emptyState"),
-  visibleCount: document.querySelector("#visibleCount"),
   activeLabel: document.querySelector("#activeLabel"),
   readerSeries: document.querySelector("#readerSeries"),
   readerTitle: document.querySelector("#readerTitle"),
@@ -22,7 +22,7 @@ const elements = {
 };
 
 const seriesLabels = {
-  all: "All series",
+  all: "全部文献",
   nsbd: "南水北调",
   hebei: "河北",
 };
@@ -39,6 +39,17 @@ async function init() {
     pdfUrl: book.pdfUrl || `${data.pdfBaseUrl}${book.filename}`,
   }));
   state.selectedId = state.books[0]?.id || null;
+
+  elements.sidebarToggle.addEventListener("click", () => {
+    const shouldOpen = document.body.classList.contains("is-sidebar-collapsed");
+    setSidebarOpen(shouldOpen);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setSidebarOpen(false);
+    }
+  });
 
   elements.searchInput.addEventListener("input", (event) => {
     state.query = event.target.value.trim().toLowerCase();
@@ -73,12 +84,16 @@ function render() {
     state.selectedId = visibleBooks[0]?.id || null;
   }
 
-  elements.visibleCount.textContent = String(visibleBooks.length);
   elements.activeLabel.textContent = seriesLabels[state.series];
   elements.emptyState.hidden = visibleBooks.length > 0;
 
   elements.bookList.replaceChildren(...visibleBooks.map(createBookButton));
   renderReader(visibleBooks.find((book) => book.id === state.selectedId));
+}
+
+function setSidebarOpen(isOpen) {
+  document.body.classList.toggle("is-sidebar-collapsed", !isOpen);
+  elements.sidebarToggle.setAttribute("aria-expanded", String(isOpen));
 }
 
 function createBookButton(book) {
@@ -116,21 +131,19 @@ function renderReader(book) {
   elements.openPdf.classList.toggle("is-disabled", !canOpenPdf);
 
   if (!book) {
-    elements.readerSeries.textContent = "Select a document";
-    elements.readerTitle.textContent = "Choose a PDF from the catalogue";
+    elements.readerSeries.textContent = "请选择文献";
+    elements.readerTitle.textContent = "从目录中选择 PDF";
     elements.openPdf.removeAttribute("href");
     elements.pdfFrame.removeAttribute("src");
-    elements.readerBlank.querySelector("strong").textContent = "No document selected";
-    elements.readerBlank.querySelector("span").textContent =
-      "Search or filter the catalogue, then select a title to preview it here.";
+    elements.readerBlank.querySelector("strong").textContent = "尚未选择文献";
+    elements.readerBlank.querySelector("span").textContent = "请在目录中检索或筛选，然后选择一篇 PDF 预览。";
     return;
   }
 
   elements.readerSeries.textContent = seriesLabels[book.series];
   elements.readerTitle.textContent = book.title;
-  elements.readerBlank.querySelector("strong").textContent = "PDF URL not configured";
-  elements.readerBlank.querySelector("span").textContent =
-    "Set pdfBaseUrl in data/catalog.json to your Bunny CDN hostname.";
+  elements.readerBlank.querySelector("strong").textContent = "PDF 地址尚未配置";
+  elements.readerBlank.querySelector("span").textContent = "请在 data/catalog.json 中把 pdfBaseUrl 改为 Bunny CDN 域名。";
 
   if (canOpenPdf) {
     elements.openPdf.href = book.pdfUrl;
@@ -148,5 +161,5 @@ function isUsablePdfUrl(url) {
 init().catch((error) => {
   elements.bookList.innerHTML = "";
   elements.emptyState.hidden = false;
-  elements.emptyState.textContent = error.message;
+  elements.emptyState.textContent = `目录加载失败：${error.message}`;
 });

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/bunny-tools/schema/bunny.schema.json",
+  "deploy": {
+    "publicDir": "dist",
+    "ignore": [
+      "bunny.json",
+      ".bunnyrc",
+      ".bunny-state.json",
+      "**/.*",
+      "**/node_modules/**",
+      "docs/**",
+      "plans/**",
+      "scripts/**",
+      "tests/**",
+      "README.md",
+      "LICENSE*",
+      "CONTRIBUTING.md",
+      "CLAUDE.md",
+      "AGENTS.md",
+      "*.md"
+    ],
+    "storageZone": "xiaohanchen",
+    "storagePassword": "REDACTED",
+    "apiKey": "REDACTED",
+    "region": "sg",
+    "concurrency": 8,
+    "pullZones": []
+  }
+}

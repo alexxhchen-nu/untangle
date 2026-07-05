@@ -1,60 +1,64 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lib Xiaohanchen</title>
+    <title>小寒斋</title>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
-  <body>
+  <body class="is-sidebar-collapsed">
+    <button
+      id="sidebarToggle"
+      class="sidebar-tab"
+      type="button"
+      aria-controls="librarySidebar"
+      aria-expanded="false"
+    >
+      <span>目录</span>
+    </button>
+
     <div class="shell">
-      <aside class="sidebar" aria-label="Library controls">
+      <aside id="librarySidebar" class="sidebar" aria-label="目录控制">
         <div class="brand">
-          <p class="brand-kicker">PDF Library</p>
-          <h1>Lib Xiaohanchen</h1>
+          <h1>小寒斋</h1>
         </div>
 
         <label class="search-field">
-          <span>Search catalogue</span>
-          <input id="searchInput" type="search" placeholder="Title, series, filename" autocomplete="off" />
+          <span>检索目录</span>
+          <input id="searchInput" type="search" placeholder="题名、系列、文件名" autocomplete="off" />
         </label>
 
-        <div class="filters" aria-label="Series filter">
-          <button class="filter is-active" type="button" data-series="all">All</button>
+        <div class="filters" aria-label="系列筛选">
+          <button class="filter is-active" type="button" data-series="all">全部</button>
           <button class="filter" type="button" data-series="nsbd">南水北调</button>
           <button class="filter" type="button" data-series="hebei">河北</button>
-        </div>
-
-        <div class="library-stat">
-          <span id="visibleCount">0</span>
-          <small>documents available</small>
         </div>
       </aside>
 
       <main class="workspace">
-        <section class="catalogue" aria-label="PDF catalogue">
+        <section class="catalogue" aria-label="PDF 目录">
           <div class="section-heading">
-            <p>Catalogue</p>
-            <span id="activeLabel">All series</span>
+            <p>文献目录</p>
+            <span id="activeLabel">全部文献</span>
           </div>
           <div id="bookList" class="book-list"></div>
-          <p id="emptyState" class="empty-state" hidden>No documents match this search.</p>
+          <p id="emptyState" class="empty-state" hidden>没有匹配的文献。</p>
         </section>
 
-        <section class="reader" aria-label="PDF viewer">
+        <section class="reader" aria-label="PDF 阅读器">
           <div class="reader-toolbar">
             <div>
-              <p id="readerSeries" class="reader-series">Select a document</p>
-              <h2 id="readerTitle">Choose a PDF from the catalogue</h2>
+              <p id="readerSeries" class="reader-series">请选择文献</p>
+              <h2 id="readerTitle">从目录中选择 PDF</h2>
             </div>
-            <a id="openPdf" class="open-link is-disabled" href="#" target="_blank" rel="noreferrer">Open PDF</a>
+            <a id="openPdf" class="open-link is-disabled" href="#" target="_blank" rel="noreferrer">打开原文</a>
           </div>
 
           <div class="viewer-frame">
             <iframe id="pdfFrame" title="PDF preview"></iframe>
             <div id="readerBlank" class="reader-blank">
-              <strong>No document selected</strong>
-              <span>Search or filter the catalogue, then select a title to preview it here.</span>
+              <strong>尚未选择文献</strong>
+              <span>请在目录中检索或筛选，然后选择一篇 PDF 预览。</span>
             </div>
           </div>
         </section>
