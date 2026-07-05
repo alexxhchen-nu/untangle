@@ -147,14 +147,29 @@ class WebTombParser:
             result["墓深"] = WebTombParser.parse_num(m.group(3))
             return result
 
-        # Fallback: try separate patterns
-        m = re.search(r'(?:南北)?长\s*([\d.]+)', text)
+        # OCR-style: 长2.02米，头端宽0.4米，足端宽0.7米，深0.75米
+        # or: 长2.6米，宽1.2米。...深1.08米
+        m = re.search(
+            r'(?:南北)?长\s*(?:约)?([\d.]+)\s*米',
+            text
+        )
         if m:
             result["墓口长"] = WebTombParser.parse_num(m.group(1))
-        m = re.search(r'(?:东西)?宽\s*([\d.]+(?:~[\d.]+)?)', text)
-        if m:
-            result["墓口宽"] = WebTombParser.parse_num(m.group(1))
-        m = re.search(r'(?:残)?深\s*([\d.]+(?:~[\d.]+)?)', text)
+        # Width: try 头端宽/足端宽 (take average) or plain 宽
+        m_widths = re.findall(r'(?:头端|足端|东西)?宽\s*(?:约)?([\d.]+(?:~[\d.]+)?)\s*米?', text)
+        if m_widths:
+            vals = [WebTombParser.parse_num(w) for w in m_widths]
+            nums = [v for v in vals if isinstance(v, (int, float))]
+            if nums:
+                result["墓口宽"] = round(sum(nums) / len(nums), 2)
+            else:
+                result["墓口宽"] = vals[0]
+        else:
+            m = re.search(r'(?:东西)?宽\s*([\d.]+(?:~[\d.]+)?)', text)
+            if m:
+                result["墓口宽"] = WebTombParser.parse_num(m.group(1))
+        # Depth
+        m = re.search(r'(?:残)?深\s*(?:约)?([\d.]+(?:~[\d.]+)?)\s*米?', text)
         if m:
             result["墓深"] = WebTombParser.parse_num(m.group(1))
 
@@ -163,8 +178,9 @@ class WebTombParser:
     @staticmethod
     def extract_direction(text: str) -> str:
         for pattern in [
-            r'方向\s*\$?\s*(\d+)\s*\^?\{?\\?circ\}?\s*\$?°?',
-            r'方向\s*(\d+)°',
+            r'方向\s*\$?\s*(\d+)\s*\^?\{?\\?circ\}?\s*\$?°?',  # LaTeX: 方向 $ 15^{\circ} $
+            r'方向\s*(\d+)\s*°',                                   # Plain: 方向299°
+            r'方向\s*(\d+)(?=[。，,\s])',                           # Bare number: 方向299。
             r'方向\s*(南北向|东西向|南向|北向|东向|西向)',
         ]:
             m = re.search(pattern, text)

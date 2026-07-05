@@ -9,9 +9,10 @@ from .tomb_parser import WebTombParser
 
 # Tomb type patterns
 TOMB_TYPES = [
-    "土坑竖穴砖椁墓", "土坑竖穴墓", "土坑洞室墓", "砖室墓",
-    "舟形墓", "砖、石室墓", "石室墓", "土坑墓", "洞室墓",
-    "竖穴土坑墓", "砖椁墓", "木椁墓", "崖墓", "土洞墓",
+    "土坑竖穴砖椁墓", "梯形土坑竖穴墓", "长方形土坑竖穴墓", "土坑竖穴墓",
+    "土坑洞室墓", "砖室墓", "舟形墓", "砖、石室墓", "石室墓",
+    "土坑墓", "洞室墓", "竖穴土坑墓", "砖椁墓", "木椁墓", "崖墓", "土洞墓",
+    "梯形土坑竖穴", "长方形土坑竖穴", "土坑竖穴",
 ]
 
 # Dynasty keywords
@@ -36,7 +37,7 @@ def detect_report_type(content: str) -> str:
     # Count tomb headers (## M\d+ patterns)
     tomb_header_count = 0
     for line in lines:
-        if re.match(r'^#{1,3}\s*(?:[一二三四五六七八九十百千]+、\s*)?(M\s*\d+)\b', line):
+        if re.match(r'^#{1,3}\s*(?:[一二三四五六七八九十百千]+[、．.\s]+\s*)?(?:\d+[、．.\s]+\s*)?(M\s*\d+)\b', line):
             tomb_header_count += 1
 
     # Count "M\d+位于" description patterns
@@ -105,34 +106,65 @@ def extract_artifacts_from_desc(text: str, tomb_id: str) -> list[dict]:
     """Extract artifacts from tomb description paragraph."""
     artifacts = []
 
-    m = re.search(r'随葬品有(.+?)(?:$|(?:图\d|图版))', text, re.DOTALL)
-    if not m:
-        if '无随葬品' in text:
-            return artifacts
+    # Check for "无随葬品" or "未发现...随葬品"
+    if '无随葬品' in text or '未发现' in text and '随葬品' in text:
         return artifacts
 
-    desc = m.group(1)
+    # Try "随葬品有..." pattern first
+    m = re.search(r'随葬品有(.+?)(?:$|(?:图\d|图版))', text, re.DOTALL)
+    if m:
+        desc = m.group(1)
+    else:
+        # Try inline "随葬N件XXX" or "随葬品为N件XXX" or "随葬品共N件"
+        desc = text
 
-    artifact_patterns = [
-        r'([\u4e00-\u9fff]+)\s*(\d+)\s*件(?:\s*（\d+组）)?(?:\s*[（(]\s*(M\d+:\d+(?:-\d+)?)\s*[）)])?',
-        r'([\u4e00-\u9fff]+)\s*(\d+)\s*枚(?:\s*（\d+组）)?',
-        r'([\u4e00-\u9fff]+)\s*(\d+)\s*[把具颗](?:\s*[（(]\s*(M\d+:\d+(?:-\d+)?)\s*[）)])?',
-    ]
+    # Words that are not artifact names
+    SKIP_WORDS = {'随葬', '随葬品', '随葬品为', '随葬品有', '随葬品共', '随葬的',
+                  '墓主', '其中', '口含', '放置', '出土', '发现', '位于',
+                  '品为', '品有', '品共', '的', '左侧', '右侧', '足部', '头部',
+                  '足端', '头端', '保存', '较差', '较好', '墓底', '墓口'}
 
-    for pat in artifact_patterns:
-        for m in re.finditer(pat, desc):
-            name = m.group(1)
-            name = re.sub(r'^其中', '', name)
-            count = int(m.group(2))
-            item_id = m.group(3) if m.lastindex >= 3 and m.group(3) else f"{tomb_id}:{len(artifacts)+1}"
-            artifacts.append({
-                "器物编号": item_id,
-                "器物名称": name,
-                "材质": WebTombParser.classify_material(name),
-                "器型": WebTombParser.classify_vessel_type(name),
-                "数量": count,
-                "特征描述": ""
-            })
+    seen_names = set()
+
+    # Pattern 1: "N件/枚XXX" — name after number (most common: "1件陶鬲")
+    for m in re.finditer(r'(\d+)\s*(?:件|枚|把|具|颗|面)\s*([\u4e00-\u9fff]{2,5}?)(?=[，。；、（(）)图版\s\n]|位于|置于|放|在|墓|$)', desc):
+        name = m.group(2).strip()
+        count = int(m.group(1))
+        if not name or name in SKIP_WORDS or name in seen_names:
+            continue
+        if not (WebTombParser.classify_material(name) != '其他' or
+                WebTombParser.classify_vessel_type(name) != name):
+            continue
+        seen_names.add(name)
+        artifacts.append({
+            "器物编号": f"{tomb_id}:{len(artifacts)+1}",
+            "器物名称": name,
+            "材质": WebTombParser.classify_material(name),
+            "器型": WebTombParser.classify_vessel_type(name),
+            "数量": count,
+            "特征描述": ""
+        })
+
+    # Pattern 2: "XXX N件" — name before number (structured lists like "蛋形瓮14件")
+    for m in re.finditer(r'([\u4e00-\u9fff]{2,6})\s*(\d+)\s*(?:件|枚|把|具|颗)', desc):
+        name = m.group(1).strip()
+        name = re.sub(r'^(?:其中|随葬|出土)', '', name)
+        name = name.strip()
+        count = int(m.group(2))
+        if not name or name in SKIP_WORDS or name in seen_names:
+            continue
+        if not (WebTombParser.classify_material(name) != '其他' or
+                WebTombParser.classify_vessel_type(name) != name):
+            continue
+        seen_names.add(name)
+        artifacts.append({
+            "器物编号": f"{tomb_id}:{len(artifacts)+1}",
+            "器物名称": name,
+            "材质": WebTombParser.classify_material(name),
+            "器型": WebTombParser.classify_vessel_type(name),
+            "数量": count,
+            "特征描述": ""
+        })
 
     return artifacts
 
@@ -172,7 +204,7 @@ def parse_tomb_focused(parser: WebTombParser, content: str) -> None:
     # Find tomb headers
     tomb_headers = []
     for i, line in enumerate(lines):
-        m = re.match(r'^#{1,3}\s*(?:[一二三四五六七八九十百千]+、\s*)?(M\s*\d+)\b', line)
+        m = re.match(r'^#{1,3}\s*(?:[一二三四五六七八九十百千]+[、．.\s]+\s*)?(?:\d+[、．.\s]+\s*)?(M\s*\d+)\b', line)
         if m:
             tomb_id = m.group(1).replace(' ', '')
             tomb_headers.append((i + 1, tomb_id))
@@ -199,13 +231,8 @@ def parse_tomb_focused(parser: WebTombParser, content: str) -> None:
 
         desc_match = re.search(r'(M\s*\d+\s*位于.+?图\s*[\d-]+[）\)])', tomb_text_clean, re.DOTALL)
         if not desc_match:
-            desc_match = re.search(r'(M\s*\d+\s*位于.+?(?:\n\n|\n<|\n##))', tomb_text, re.DOTALL)
-        if not desc_match:
-            # Relaxed: match up to first line that looks like a separate artifact description
-            desc_match = re.search(r'(M\s*\d+\s*位于.+?)(?=\n[\u4e00-\u9fff]+\s+\d+\s*[件把枚颗])', tomb_text, re.DOTALL)
-        if not desc_match:
-            # Most relaxed: take the first paragraph after "位于"
-            desc_match = re.search(r'(M\s*\d+\s*位于.+?)(?:\n\n|\Z)', tomb_text, re.DOTALL)
+            # Take everything until next header or HTML div block (greedy across paragraphs)
+            desc_match = re.search(r'(M\s*\d+\s*位于.+?)(?=\n##|\n<div|\n\n\n|\Z)', tomb_text, re.DOTALL)
 
         if not desc_match:
             parser.add_tomb({
@@ -363,6 +390,28 @@ def auto_parse(report_name: str, content: str) -> WebTombParser:
     """
     # Clean HTML image tags but preserve newlines (needed for header detection)
     content = re.sub(r'<div[^>]*>.*?</div>', ' ', content, flags=re.DOTALL)
+
+    # Fix OCR line-break artifacts: merge lines that break mid-word
+    # e.g. "深0.5\n\n米" -> "深0.5米"
+    lines = content.split('\n')
+    merged = []
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            merged.append('')
+            continue
+        if merged:
+            prev = merged[-1].rstrip()
+            # Previous line ends with digit/dot and this line starts with a unit/continuation
+            if prev and re.search(r'[\d.~]$', prev) and re.match(r'^[米厘米毫寸尺丈]', stripped):
+                merged[-1] = prev + stripped
+                continue
+            # Previous line ends with digit and this starts with punctuation that continues the sentence
+            if prev and re.search(r'[\d]$', prev) and re.match(r'^[，、。；：的和及与米]', stripped):
+                merged[-1] = prev + stripped
+                continue
+        merged.append(line)
+    content = '\n'.join(merged)
 
     parser = WebTombParser(report_name, content)
     report_type = detect_report_type(content)
