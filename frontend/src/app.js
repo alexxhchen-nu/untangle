@@ -4,7 +4,7 @@ const state = {
   books: [],
   query: "",
   series: "all",
-  selectedId: null,
+  openIds: new Set(),
 };
 
 const elements = {
@@ -76,9 +76,12 @@ function getVisibleBooks() {
 
 function render() {
   const visibleBooks = getVisibleBooks();
-  if (!visibleBooks.some((book) => book.id === state.selectedId)) {
-    state.selectedId = null;
-  }
+  const visibleIds = new Set(visibleBooks.map((book) => book.id));
+  state.openIds.forEach((id) => {
+    if (!visibleIds.has(id)) {
+      state.openIds.delete(id);
+    }
+  });
 
   elements.activeLabel.textContent = seriesLabels[state.series];
   elements.emptyState.hidden = visibleBooks.length > 0;
@@ -92,18 +95,23 @@ function setSidebarOpen(isOpen) {
 }
 
 function createBookRow(book) {
+  const isOpen = state.openIds.has(book.id);
   const row = document.createElement("div");
   row.className = "book-row";
-  row.classList.toggle("is-expanded", book.id === state.selectedId);
+  row.classList.toggle("is-expanded", isOpen);
 
   const button = document.createElement("button");
   button.className = "book-card";
   button.type = "button";
   button.dataset.id = book.id;
-  button.setAttribute("aria-expanded", String(book.id === state.selectedId));
-  button.classList.toggle("is-selected", book.id === state.selectedId);
+  button.setAttribute("aria-expanded", String(isOpen));
+  button.classList.toggle("is-selected", isOpen);
   button.addEventListener("click", () => {
-    state.selectedId = state.selectedId === book.id ? null : book.id;
+    if (state.openIds.has(book.id)) {
+      state.openIds.delete(book.id);
+    } else {
+      state.openIds.add(book.id);
+    }
     render();
   });
 
@@ -121,7 +129,7 @@ function createBookRow(book) {
   const actions = document.createElement("div");
   actions.className = "book-actions";
   actions.setAttribute("aria-label", `${book.title} 下载选项`);
-  actions.hidden = book.id !== state.selectedId;
+  actions.hidden = !isOpen;
   actions.append(
     createActionLink("下载 PDF 原文", book.pdfUrl),
     createActionDivider(),
