@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-10T12:34:49Z"
+exported_at: "2026-07-10T12:59:19Z"
 modules:
     "":
-        dir_name: LLM-考古项目根目录
-        title: LLM-考古项目根目录
+        dir_name: 考古图像分类实验工作区
+        title: 考古图像分类实验工作区
         scope:
             - main.py
             - pyproject.toml
@@ -20,8 +20,8 @@ modules:
         depends_on: []
         related_to: []
     training_scripts_and_notebooks:
-        dir_name: 训练脚本与实验笔记本
-        title: 训练脚本与实验笔记本
+        dir_name: 考古图像分类训练与 OCR 工具脚本
+        title: 考古图像分类训练与 OCR 工具脚本
         scope:
             - scripts/
             - notebooks/

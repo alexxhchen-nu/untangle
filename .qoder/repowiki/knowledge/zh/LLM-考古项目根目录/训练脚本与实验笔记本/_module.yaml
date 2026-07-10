@@ -1,9 +1,0 @@
-schema_version: 1
-module_path: training_scripts_and_notebooks
-title: 训练脚本与实验笔记本
-scope:
-    - scripts/
-    - notebooks/
-source_files: []
-depends_on: []
-related_to: []
