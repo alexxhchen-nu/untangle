@@ -1,0 +1,31 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-07-10T12:34:49Z"
+modules:
+    "":
+        dir_name: LLM-考古项目根目录
+        title: LLM-考古项目根目录
+        scope:
+            - main.py
+            - pyproject.toml
+            - .gitignore
+            - PROJECT.md
+            - train_output.log
+        source_files: []
+        children:
+            - training_scripts_and_notebooks
+        depends_on: []
+        related_to: []
+    training_scripts_and_notebooks:
+        dir_name: 训练脚本与实验笔记本
+        title: 训练脚本与实验笔记本
+        scope:
+            - scripts/
+            - notebooks/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

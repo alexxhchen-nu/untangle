@@ -9,3 +9,6 @@ datasets/
 *.pth
 .venv/
 __pycache__/
+data/pdfs/
+data/extracted/
+data/maps/

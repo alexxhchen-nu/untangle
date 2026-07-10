@@ -1,0 +1,12 @@
+schema_version: 1
+module_path: ""
+title: LLM-考古项目根目录
+scope:
+    - main.py
+    - pyproject.toml
+    - .gitignore
+    - PROJECT.md
+    - train_output.log
+source_files: []
+depends_on: []
+related_to: []
