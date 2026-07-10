@@ -5,3 +5,7 @@ __pycache__/
 data/raw/*.pdf
 output/
 .ipynb_checkpoints/
+datasets/
+*.pth
+.venv/
+__pycache__/
