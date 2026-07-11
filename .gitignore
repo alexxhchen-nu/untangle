@@ -1,0 +1,20 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Data directories (user uploads locally)
+pdfs/*.pdf
+markdown/*.md
+json/*.json
+exports/*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Database
+tombs.db
+*.db
