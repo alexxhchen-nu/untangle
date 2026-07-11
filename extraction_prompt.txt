@@ -5,13 +5,13 @@
 2. 数组中每个元素代表一个墓葬。
 3. 如果某字段原文未提及，使用 null 或 "未提及"，不要编造。
 4. 年代和族属判断必须区分：是报告作者的结论，还是你自己的推断。
-5. 如果图文冲突，优先按文字描述记录，并在 note 字段标注。
+5. 如果图文冲突，优先按文字描述记录，并在 uncertainty 中标注。
 6. 墓葬形制（tomb_form）必须给出单标签主分类，并从下面候选中挑选最贴切的一个；若原文有复合描述，把次要信息放进 tomb_type 字段。
 
 候选形制单标签：
 土坑竖穴墓 | 土坑洞室墓 | 砖室墓 | 砖椁墓 | 石室墓 | 土坑竖穴砖椁墓 | 舟形墓 | 瓮棺墓 | 其他
 
-字段列表：
+实测记录层字段（每个墓葬一条）：
 - tomb_id: 墓葬编号
 - site_name: 遗址/墓地名称
 - location: 地理位置（省/市/县）
@@ -21,16 +21,16 @@
 - tomb_type: 报告原文对墓葬类型的称呼或复合形制描述
 - orientation: 墓葬方向
 - passage: 墓道有无及方向
-- chamber_shape: 墓室平面形状
+- chamber_shape: 墓室平面形状（长方形/梯形/方形/圆形/椭圆形/舟形/不规则/未提及）
 - chamber_size: 墓室尺寸（长×宽×深，厘米）
-- sealing: 封门方式
+- sealing: 封门方式（无/夯土/砖封门/石封门/木板/未提及）
 - coffin: 棺椁情况
-- platform: 二层台有无
+- platform: 二层台有无（无/有（生土）/有（熟土）/未提及）
 - niche: 壁龛有无（头龛/足龛/侧龛，数量）
-- flooring: 铺地材料
-- burial_position: 葬式（直肢/屈肢/二次葬/扰乱葬等）
+- flooring: 铺地材料（无/青砖/石板/夯土/白灰/未提及）
+- burial_position: 葬式（直肢/屈肢/二次葬/扰乱葬/仰身直肢/侧身屈肢/俯身/未提及）
 - head_direction: 头向
-- bone_preservation: 人骨保存情况
+- bone_preservation: 人骨保存情况（完好/较差/仅存牙齿/不存/未提及）
 - sacrificial_animals: 殉葬动物种类及位置
 - artifact_distribution: 随葬品空间分布
 - artifact_types: 器类列表
@@ -42,6 +42,21 @@
 - dating_basis: 定年依据
 - special_customs: 特殊葬俗
 - reported_ethnicity: 报告族属判断
-- social_structure_hints: 可用于推断社会等级/财富/身份的特征（如规模、特殊器物、殉葬等）
-- cultural_affiliation_hints: 可用于推断族属或文化归属的特征（如器物风格、葬俗、头向等）
-- note: 图文冲突、缺失信息、置信度说明
+
+证据层字段 evidence_records（数组）：
+每条证据包含：
+- interpretation_field: 支撑哪个字段的推断（tomb_form/chronology/social_rank/wealth/ethnicity/burial_custom/artifact_combination/other）
+- evidence_type: 证据类型（coin_type/artifact_typology/tomb_structure/regional_comparison/stratigraphy/report_citation/text_description/image_plan/image_section/radiocarbon/dna/historical_record/other）
+- evidence_content: 证据内容摘要
+- report_citation: 报告中的具体引文、页码或图号
+- evidence_confidence: 证据可信度（高/中/低/不确定）
+
+不确定性层字段 uncertainty_records（数组）：
+每条不确定性包含：
+- field_name: 哪个字段存在不确定性
+- confidence_score: 0-1 之间的置信度分数
+- competing_interpretations: 不同解释或冲突点
+- reviewer_notes: 需要人工复核的备注
+- review_status: pending/confirmed/disputed/needs_review
+
+注意：证据层和不确定性层如果原文没有明确冲突或特殊证据，可以为空数组，但不要省略字段。

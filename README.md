@@ -1,66 +1,61 @@
-# 墓葬考古数据抽取与量化分析管线
+# 墓葬考古数据抽取管线
 
-一个 Jupyter Notebook 管线，把考古简报/报告 PDF 自动转化为结构化数据库，支持类型学分析、年代-族属交叉分析和 QGIS 可视化。
+VPS 项目路径：`/root/xiaohanchen/projects/tomb-archaeology-pipeline/`
 
-本管线采用“特征抽取 → 形制分类 → 数据库推断层”的分层架构：
-- **特征层**：从文本和图像中提取墓葬形制、尺寸、方向、随葬品等客观字段。
-- **形制分类层**：将墓葬归为一个主形制标签（如土坑竖穴墓、砖室墓等），作为后续分析的基础。
-- **推断层**：在数据库中独立维护社会结构分析（等级/财富/身份）和文化归属分析（族属/文化认同），避免模型直接做跨维度跳跃判断。
+## 目标
 
-## 目录结构
+把考古简报/报告 PDF 中的墓葬信息自动提取为结构化数据库，支持：
+- LLM 文本抽取实测记录、证据、不确定性
+- 图像模型识别墓葬形制（Roboflow）
+- 数据库规则推断社会结构、文化归属、年代置信
+- 导出 CSV/JSON 用于 QGIS、Excel、关联规则分析
 
-```
-tomb-archaeology-pipeline/
-├── pdfs/                       # 放入待处理的 PDF 报告
-├── markdown/                   # PDF 转 Markdown 后的中间文件
-├── json/                       # LLM 抽取后的结构化 JSON
-├── exports/                    # CSV / GeoJSON 导出文件
-├── tomb_extraction_pipeline.ipynb   # 主管线
-├── sample_report_findings.ipynb     # 样本报告分析日志
-├── extraction_prompt.txt
-├── requirements.txt
-├── .env.example
-└── README.md
-```
+## 五层数据本体
 
-## 使用步骤
+详见 `ONTOLOGY.md`。
 
-1. 安装依赖
+1. **图像标签层（image_labels）**：仅视觉可判字段，如 `visual_tomb_form`、`image_type`、`image_quality`。由 Roboflow 或人工标注填充。
+2. **实测记录层（tombs）**：客观可测属性，由 LLM 从报告文字提取。
+3. **证据层（evidence_records）**：每个推断背后的证据链。
+4. **分析层（analysis_results）**：社会等级、财富、家族/亲属、文化归属、年代置信等推断结果。
+5. **不确定性层（uncertainty_records）**：置信度、冲突解释、待复核事项。
+
+## 文件说明
+
+- `tomb_extraction_pipeline.ipynb`：主流程 notebook（PDF → Markdown → JSON → SQLite → 分析）
+- `extraction_prompt.txt`：当前使用的 LLM 抽取 prompt
+- `ONTOLOGY.md`：五层本体设计 + 受控词表
+- `sample_report_findings.ipynb`：`章丘女郎山.md` 的读报笔记
+- `pdfs/`：原始 PDF（不提交 git）
+- `markdown/`：PDF 转 Markdown（不提交 git）
+- `json/`：LLM 抽取结果（不提交 git）
+- `tombs.db`：SQLite 数据库（不提交 git）
+- `exports/`：CSV 导出（不提交 git）
+
+## 环境
 
 ```bash
-uv pip install -r requirements.txt
+cd /root/xiaohanchen/projects/tomb-archaeology-pipeline
+source .venv/bin/activate
+jupyter lab
 ```
 
-2. 配置 API Key
+Kernel: `tomb-ml`
+
+## 配置
+
+复制 `.env.example` 为 `.env` 并填入：
 
 ```bash
-cp .env.example .env
-# 编辑 .env，填入 KIMI_API_KEY
+KIMI_API_KEY=sk-...
+KIMI_BASE_URL=https://api.kimi.com/coding/v1
 ```
-
-3. 把 PDF 报告放入 `pdfs/` 目录
-
-4. 打开 `tomb_extraction_pipeline.ipynb`，按顺序运行 cell
-
-## 管线流程
-
-1. PDF → Markdown（MinerU / marker-pdf）
-2. Markdown → 结构化 JSON（Kimi/DeepSeek LLM）
-3. JSON → SQLite 数据库（主表 + 社会结构推断表 + 文化归属推断表）
-4. Python 量化分析（交叉表、关联规则）
-5. 导出 CSV/Shapefile 进 QGIS
-
-## 字段说明
-
-详见 notebook 中的 `EXTRACTION_PROMPT` 和 SQLite schema，覆盖：
-- 墓葬编号、**形制主标签**、方向、墓室形状/尺寸
-- 壁龛、葬式、头向、随葬品组合
-- 报告定年、纪年材料、族属判断
-- 特殊器物、特殊葬俗、图文冲突备注
-- 可用于社会结构/文化归属推断的原始线索字段
 
 ## 当前状态
 
-- 已配置 GitHub remote，代码在 `main` 分支跟踪 `origin/main`。
-- `sample_report_findings.ipynb` 以《章丘女郎山》报告为样本，验证了文本结构和字段映射。
-- 图像形制分类器尚未训练，数据库中已预留 `tomb_form_image_label` 等字段供后续接入。
+- [x] 五层 ontology 设计完成
+- [x] SQLite schema 更新完成
+- [x] 抽取 prompt 更新完成
+- [ ] 配置真实 API key 并跑通 LLM 抽取
+- [ ] 从 PDF 提取墓葬图像并训练 Roboflow 形制分类器
+- [ ] 编写社会结构/文化归属推断规则
