@@ -18,3 +18,4 @@ exports/*
 # Database
 tombs.db
 *.db
+__pycache__/
