@@ -284,3 +284,31 @@ kaggle competitions download -c imagenet-object-localization-challenge
 - ImageNet: https://image-net.org/
 - ImageNet Download: https://image-net.org/download.php
 - WordNet: https://wordnet.princeton.edu/
+
+---
+
+## 七、故宫博物院数字资源 —— 极重要数据源
+
+> 记录时间：2026-07-11  
+> 优先级：⭐⭐⭐⭐⭐ 极高
+
+| 平台 | URL | 类型 | 核心价值 |
+|------|-----|------|----------|
+| **故宫博物院数字文物库** | https://digicol.dpm.org.cn | 高清影像 + 元数据 | 书画、陶瓷、青铜、玉器、珐琅等带年代/材质/器型标签的文物图像，可直接作为朝代分类训练数据 |
+| **故宫名画记** | https://minghuaji.dpm.org.cn | 历代名画高清图像 | 题跋、印章、鉴藏信息；可用于书画风格分析、OCR、与墓葬壁画/画像石做年代对照 |
+| **故宫数字多宝阁** | https://www.dpm.org.cn/shuziduobaoge.html | 三维文物展示 | 器型 3D 模型 / 360° 视图，补全出土器物的立体形态信息 |
+
+### 与当前项目的关联
+
+1. **朝代预测**：数字文物库提供带朝代标注的文物图像，是 Bronze Ding / Eaves Tiles 之外的中文本土高价值数据源。
+2. **器型/材质分类**：可与 kaogu-parser 器物分类体系对齐，补充陶瓷、青铜、玉器等器型样本。
+3. **LLM / RAG**：三平台构成高质量中文文物考古知识库，可用于 few-shot 示例、SFT 数据、RAG 检索源。
+4. **三维形态**：数字多宝阁的 3D 数据可支持器型重建、形态学分析与墓葬出土器物的视觉补全。
+
+### 下一步行动
+
+- [ ] 调研各平台是否提供公开 API / 数据下载接口。
+- [ ] 编写合规抓取脚本，将元数据保存到 data/raw/dpm/。
+- [ ] 建立与现有朝代标签体系的映射。
+- [ ] 评估名画记图像用于 OCR/题跋识别的可行性。
+- [ ] 评估数字多宝阁三维数据格式及下载方式。
