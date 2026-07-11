@@ -1,0 +1,7 @@
+[
+  {"tomb_id":"满城一号墓","dynasty_actual":"西汉","source":"满城汉墓发掘报告","features":{"tomb_type":"崖墓","has_bronze":true,"has_jade":true,"has_coin":"五铢"}},
+  {"tomb_id":"满城二号墓","dynasty_actual":"西汉","source":"满城汉墓发掘报告","features":{"tomb_type":"崖墓","has_bronze":true,"has_jade":true,"has_coin":"五铢","has_mirror":true}},
+  {"tomb_id":"sim wen-wu 1950-10 M1","dynasty_actual":"西汉","features":{"tomb_type":"土坑竖穴","has_bronze":true,"vessel_combo":["鼎","豆","壶"],"has_coin":"半两"}},
+  {"tomb_id":"sim wen-wu 1951-1 M3","dynasty_actual":"东汉","features":{"tomb_type":"砖室","chamber_count":1,"has_coin":"五铢","has_mirror":true}},
+  {"tomb_id":"sim wen-wu 1951-10 M1","dynasty_actual":"魏晋","features":{"tomb_type":"砖室","tomb_shape":"刀形","has_iron":true,"has_coin":"无"}}
+]

@@ -1,0 +1,255 @@
+# 断代规则库 - 基于考古类型学
+# 格式: 条件 -> 断代结果 + 置信度 + 证据
+
+# ============================================
+# 商代
+# ============================================
+- id: shang-dynasty-bronze-ritual
+  dynasty: 商代
+  confidence: 0.90
+  conditions:
+    has_bronze: true
+    vessel_combo_contains: [鼎, 爵, 斝, 觚]
+    has_coin: 无
+  evidence: "青铜礼器组合(鼎爵斝觚)是商代墓葬的典型特征，尚无金属货币"
+  weight: 1.0
+
+# ============================================
+# 西周
+# ============================================
+- id: western-zhou-bronze-combo
+  dynasty: 西周
+  confidence: 0.85
+  conditions:
+    has_bronze: true
+    vessel_combo_contains: [鼎, 簋, 壶]
+    has_coin: 无
+    has_iron: false
+  evidence: "青铜鼎簋壶组合是西周礼器制度的核心，铁器尚未普及"
+  weight: 1.0
+
+# ============================================
+# 春秋战国
+# ============================================
+- id: spring-autumn-iron-appearance
+  dynasty: 春秋战国
+  confidence: 0.75
+  conditions:
+    has_bronze: true
+    has_iron: true
+    has_coin: 无
+  evidence: "青铜器与铁器并存是春秋战国时期的特征，铁器开始出现但未普及"
+  weight: 0.8
+
+# ============================================
+# 秦代
+# ============================================
+- id: qin-dynasty-banliang
+  dynasty: 秦代
+  confidence: 0.85
+  conditions:
+    has_coin: 半两
+    has_bronze: true
+    tomb_type: 土坑竖穴
+  evidence: "半两钱是秦代统一货币，土坑竖穴墓仍是主流"
+  weight: 1.0
+
+# ============================================
+# 西汉
+# ============================================
+- id: western-han-pit-bronze-combo
+  dynasty: 西汉
+  confidence: 0.85
+  conditions:
+    tomb_type: 土坑竖穴
+    has_bronze: true
+    vessel_combo_contains: [鼎, 豆, 壶]
+  evidence: "土坑竖穴墓 + 青铜礼器鼎豆壶组合是西汉早期典型特征"
+  weight: 1.0
+
+- id: western-han-cliff-tomb
+  dynasty: 西汉
+  confidence: 0.90
+  conditions:
+    tomb_type: 崖墓
+    has_bronze: true
+    has_jade: true
+    has_coin: 五铢
+  evidence: "崖墓 + 青铜器 + 玉器 + 五铢钱是西汉高等级墓葬的标志"
+  weight: 1.0
+
+- id: western-han-wood-coffin
+  dynasty: 西汉
+  confidence: 0.80
+  conditions:
+    tomb_type: 木椁墓
+    has_bronze: true
+    vessel_combo_contains: [鼎, 壶]
+    has_coin: 五铢
+  evidence: "木椁墓 + 青铜鼎壶 + 五铢钱是西汉中型墓葬的典型组合"
+  weight: 0.9
+
+# ============================================
+# 东汉
+# ============================================
+- id: eastern-han-brick-wuzhu
+  dynasty: 东汉
+  confidence: 0.80
+  conditions:
+    tomb_type: 砖室
+    chamber_count: 1
+    has_coin: 五铢
+    has_mirror: true
+  evidence: "单室砖墓 + 五铢钱 + 铜镜是东汉中晚期常见组合"
+  weight: 1.0
+
+- id: eastern-han-brick-multi
+  dynasty: 东汉
+  confidence: 0.85
+  conditions:
+    tomb_type: 砖室
+    chamber_count: 2
+    has_coin: 五铢
+    vessel_combo_contains: [灶, 井]
+  evidence: "双室砖墓 + 五铢钱 + 陶灶陶井(模型明器)是东汉典型特征"
+  weight: 1.0
+
+- id: eastern-han-brick-cave
+  dynasty: 东汉
+  confidence: 0.75
+  conditions:
+    tomb_type: 土洞
+    has_coin: 五铢
+    has_iron: true
+  evidence: "土洞墓 + 五铢钱 + 铁器是东汉中小型墓葬的常见形态"
+  weight: 0.8
+
+# ============================================
+# 魏晋
+# ============================================
+- id: wei-jin-knife-brick
+  dynasty: 魏晋
+  confidence: 0.80
+  conditions:
+    tomb_type: 砖室
+    tomb_shape: 刀形
+    has_iron: true
+    has_coin: 无
+  evidence: "刀形砖室墓是魏晋时期典型形制，铁器普及，铜钱减少"
+  weight: 1.0
+
+- id: wei-jin-rect-brick
+  dynasty: 魏晋
+  confidence: 0.70
+  conditions:
+    tomb_type: 砖室
+    tomb_shape: 长方形
+    has_iron: true
+    has_bronze: false
+    has_coin: 无
+  evidence: "长方形砖室墓 + 铁器为主 + 无铜器铜钱是魏晋特征"
+  weight: 0.8
+
+# ============================================
+# 南北朝
+# ============================================
+- id: northern-dynasties-mixed
+  dynasty: 南北朝
+  confidence: 0.75
+  conditions:
+    tomb_type: 砖室
+    has_iron: true
+    has_ceramic: true
+    special_items_contains: [步摇, 马具]
+  evidence: "砖室墓 + 铁器陶器 + 步摇/马具等北方民族器物是南北朝特征"
+  weight: 0.9
+
+# ============================================
+# 隋唐
+# ============================================
+- id: tang-dynasty-knife-unicorn
+  dynasty: 唐代
+  confidence: 0.85
+  conditions:
+    tomb_type: 砖室
+    tomb_shape: 刀形
+    has_unicorn: true
+    has_mirror: true
+  evidence: "刀形砖墓 + 镇墓兽/天王俑 + 铜镜是唐代墓葬标志性组合"
+  weight: 1.0
+
+- id: tang-dynasty-sancai
+  dynasty: 唐代
+  confidence: 0.80
+  conditions:
+    tomb_type: 砖室
+    vessel_combo_contains: [三彩]
+    has_mirror: true
+  evidence: "三彩器 + 铜镜是唐代中高等级墓葬的典型随葬品"
+  weight: 1.0
+
+# ============================================
+# 宋代
+# ============================================
+- id: song-dynasty-porcelain
+  dynasty: 宋代
+  confidence: 0.75
+  conditions:
+    tomb_type: 砖室
+    has_ceramic: true
+    has_bronze: false
+    vessel_combo_contains: [影青, 青瓷]
+    has_coin: 无
+  evidence: "砖室墓 + 影青/青瓷 + 无铜器是宋代墓葬的常见特征"
+  weight: 0.8
+
+# ============================================
+# 元代
+# ============================================
+- id: yuan-dynasty-mongol
+  dynasty: 元代
+  confidence: 0.70
+  conditions:
+    tomb_type: 砖室
+    has_iron: true
+    special_items_contains: [铜鍑, 带扣]
+    has_coin: 无
+  evidence: "砖室墓 + 铜鍑/带扣等蒙古风格器物是元代墓葬的特征"
+  weight: 0.8
+
+# ============================================
+# 明代
+# ============================================
+- id: ming-dynasty-porcelain-official
+  dynasty: 明代
+  confidence: 0.80
+  conditions:
+    tomb_type: 砖室
+    vessel_combo_contains: [青花]
+    has_coin: 无
+  evidence: "砖室墓 + 青花瓷是明代墓葬的典型特征"
+  weight: 1.0
+
+# ============================================
+# 清代
+# ============================================
+- id: qing-dynasty-porcelain-modern
+  dynasty: 清代
+  confidence: 0.75
+  conditions:
+    tomb_type: 砖室
+    vessel_combo_contains: [青花, 粉彩]
+    has_iron: true
+  evidence: "砖室墓 + 青花/粉彩瓷 + 铁器是清代墓葬的特征"
+  weight: 0.9
+
+# Early Western Han with banliang
+- id: early-western-han-banliang
+  dynasty: 西汉
+  confidence: 0.80
+  conditions:
+    has_coin: 半两
+    tomb_type: 土坑竖穴
+    vessel_combo_contains: [鼎, 豆]
+  evidence: 半两钱+土坑竖穴+鼎豆组合是西汉早期特征
+  weight: 1.2
