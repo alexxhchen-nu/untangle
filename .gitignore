@@ -31,3 +31,14 @@ output/
 .mimocode
 .qoder
 .claude
+
+# R2 下载的期刊 PDF
+data/r2-journals/
+
+# SQLite 数据库（运行时生成）
+kaogu.db
+kaogu.db-shm
+kaogu.db-wal
+
+# 运行日志
+logs/
