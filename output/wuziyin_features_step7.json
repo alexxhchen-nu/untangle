@@ -1,0 +1,382 @@
+{
+  "source": "wuziyin.md",
+  "total_features": 47,
+  "features": [
+    {
+      "feature_name": "无字印材质类型",
+      "feature_type": "categorical",
+      "value": "玉石/铜/滑石",
+      "dynasty_signal": "汉代（铜印多见于西汉，滑石印多见于东汉至魏晋）",
+      "evidence": "学界目前对无字印是否有印文及其性质的认识分歧较大，研究对象主要集中在玉无字印，对于铜无字印、滑石无字印则关注较少",
+      "confidence": 0.6
+    },
+    {
+      "feature_name": "文献引用数量",
+      "feature_type": "numeric",
+      "value": "5组",
+      "dynasty_signal": "反映该研究领域积累程度，非断代特征",
+      "evidence": "广西桂县罗泊湾汉墓发掘者认为...和勋认为...周黎、周波也认为...徐娟则认为...郑志刚也对...提出了质疑",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "典型墓例数量",
+      "feature_type": "numeric",
+      "value": "1",
+      "dynasty_signal": "汉代",
+      "evidence": "广西桂县罗泊湾汉墓发掘者认为，一号墓出土的无字印是随葬明器",
+      "confidence": 0.8
+    },
+    {
+      "feature_name": "无字印成因假说数量",
+      "feature_type": "numeric",
+      "value": "4种",
+      "dynasty_signal": "反映学术讨论多元性，非断代特征",
+      "evidence": "1.印文因浸泡被毁；2.原本是朱砂书写吉语印年久磨灭；3.原本应有书写印文内容为墓主身份；4.可能原本就没有文字；5.玉无字印是印章形佩玉",
+      "confidence": 0.7
+    },
+    {
+      "feature_name": "随葬无字印墓葬总数",
+      "feature_type": "numeric",
+      "value": "82座（西汉73座，东汉8座，年代不明1座）",
+      "dynasty_signal": "西汉通用",
+      "evidence": "经过整理，目前考古发现随葬无字印的汉墓共有82座，其中西汉墓73座，东汉墓8座，年代不明1座。",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "无字印出土总数",
+      "feature_type": "numeric",
+      "value": "97枚",
+      "dynasty_signal": "西汉通用",
+      "evidence": "这82座汉墓中共发现各类无字印97枚。",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "墓葬出土无字印数量",
+      "feature_type": "ratio",
+      "value": "绝大部分1枚/座，个别多枚（如南越王墓7枚）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "绝大部分墓葬中只随葬1枚无字印，但也有个别墓葬中随葬多枚，例如西汉南越王墓随葬7枚无字印。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "玉印数量",
+      "feature_type": "numeric",
+      "value": "31枚，出土于26座墓",
+      "dynasty_signal": "西汉早期>中期>晚期（递减趋势）",
+      "evidence": "目前发现的97枚无字印中，数量最多的是玉印，共有31枚，发现于26座墓中。其中西汉早期16座，西汉中期7座，西汉晚期1座，东汉早期1座，年代不明1座。",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "玉印印面形状比例",
+      "feature_type": "ratio",
+      "value": "正方形93.5%（29枚），长方形6.5%（2枚）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "印面除2枚为长方形外，其他均为规整的正方形。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "玉印钮制分布",
+      "feature_type": "ratio",
+      "value": "坛钮77.4%（24枚），桥钮6.5%（2枚），龟钮6.5%（2枚），螭虎钮6.5%（2枚），鼻钮3.2%（1枚）",
+      "dynasty_signal": "西汉早期",
+      "evidence": "坛钮24枚，占绝对优势；此外有2枚桥钮，2枚龟钮，2枚螭虎钮，以及1枚鼻钮。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "玉印印面宽度范围",
+      "feature_type": "numeric",
+      "value": "1.5-2.5厘米",
+      "dynasty_signal": "汉代通用",
+      "evidence": "玉无字印的印面宽度大都在1.5－2.5厘米。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "玉印高度范围",
+      "feature_type": "numeric",
+      "value": "多在1.5厘米以内",
+      "dynasty_signal": "汉代通用",
+      "evidence": "高度多在1.5厘米以内，符合汉印方寸之间的规范。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "动物形钮玉印数量",
+      "feature_type": "numeric",
+      "value": "4枚",
+      "dynasty_signal": "西汉早期（高等级贵族标志）",
+      "evidence": "值得注意的是，4枚动物形钮无字玉印分别出土于中山王刘胜墓、海昏侯刘贺墓以及位于长沙王陵区被盗的八号墓，可见动物形钮玉无字印的使用者均具有较高的身份。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "滑石印数量",
+      "feature_type": "numeric",
+      "value": "29枚，出土于26座墓",
+      "dynasty_signal": "西汉早期>中期>晚期（递减趋势）",
+      "evidence": "滑石无字印共发现29枚。目前出土滑石无字印的汉墓共有26座，其中西汉早期墓17座，西汉中期7座，西汉晚期1座，东汉中期1座。",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "滑石印最大出土数量",
+      "feature_type": "numeric",
+      "value": "4枚（长沙南郊砂子塘2号墓）",
+      "dynasty_signal": "西汉中期",
+      "evidence": "除长沙南郊砂子塘2号墓随葬有4枚（钮未穿孔），其他各墓均只随葬1枚。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "滑石印钮制分布",
+      "feature_type": "ratio",
+      "value": "桥钮65.5%（19件），坛钮34.5%（10件），无动物形钮",
+      "dynasty_signal": "西汉（与玉印的差异在于无动物形钮）",
+      "evidence": "钮制以桥钮为主，共有19件。此外还有坛钮10件，未见动物形钮。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "滑石印印面尺寸范围",
+      "feature_type": "numeric",
+      "value": "印面2-3厘米，高度1.5-2厘米",
+      "dynasty_signal": "汉代通用（比玉印略大）",
+      "evidence": "滑石无字印的印面尺寸整体上比玉印略大，多在2厘米-3厘米，高度大都在1.5厘米-2厘米。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "铜印数量",
+      "feature_type": "numeric",
+      "value": "29枚（4枚鎏金），出土于26座墓",
+      "dynasty_signal": "西汉晚期最多（与其他材质的差异特征）",
+      "evidence": "汉墓随葬无字印中，也发现了29枚铜印，其中4枚鎏金。目前出土铜无字印的汉墓共有26座，其中西汉早期5座，西汉中期2座，西汉晚期14座，东汉早期2座，东汉中期1座，东汉晚期2座。",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "铜印钮制分布",
+      "feature_type": "ratio",
+      "value": "桥钮44.8%（13枚），龟钮34.5%（10枚），麒麟钮6.9%（2枚），蛇钮3.4%（1枚），鼻钮3.4%（1枚），双面3.4%（1枚）",
+      "dynasty_signal": "西汉晚期（龟钮比例较高）",
+      "evidence": "钮制以桥钮最多，共有13枚，龟钮10枚。此外还有麒麟钮2枚，蛇钮、鼻钮、双面以及形制不明各1枚。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "铜印印面尺寸范围",
+      "feature_type": "numeric",
+      "value": "1.5-2厘米（与玉印相近）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "铜无字印的印面尺寸整体比滑石印小，与玉印相近，多在1.5厘米－2厘米，高度多在1.5厘米以内。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "南越王墓无字印数量",
+      "feature_type": "numeric",
+      "value": "11枚（玉印7枚+绿松石2枚+玛瑙1枚+水晶1枚）",
+      "dynasty_signal": "西汉早期",
+      "evidence": "西汉南越王墓随葬7枚无字印...此墓出土绿松石无字印2枚、玛瑙无字印1枚、水晶无字印1枚。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "骨质无字印尺寸",
+      "feature_type": "numeric",
+      "value": "印面边长1.5厘米，高1.2厘米",
+      "dynasty_signal": "西汉（河北燕下都）",
+      "evidence": "河北燕下都遗址的一座西汉墓内出土1枚坛钮骨质无字印，印面边长1.5厘米，高1.2厘米。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "无字印材质种类",
+      "feature_type": "categorical",
+      "value": "玉、滑石、铜、绿松石、玛瑙、水晶、琉璃、骨质",
+      "dynasty_signal": "西汉早期（材质多样）",
+      "evidence": "除玉印、滑石印、铜印外，汉墓随葬的其他材质无字印主要发现于西汉南越王墓。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "各时期墓葬出土玉印比例",
+      "feature_type": "ratio",
+      "value": "西汉早期61.5%（16/26），西汉中期26.9%（7/26），西汉晚期3.8%（1/26），东汉早期3.8%（1/26）",
+      "dynasty_signal": "西汉早期（绝对优势）",
+      "evidence": "其中西汉早期16座，西汉中期7座，西汉晚期1座，东汉早期1座，年代不明1座。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "各时期墓葬出土滑石印比例",
+      "feature_type": "ratio",
+      "value": "西汉早期65.4%（17/26），西汉中期26.9%（7/26），西汉晚期3.8%（1/26），东汉中期3.8%（1/26）",
+      "dynasty_signal": "西汉早期（绝对优势）",
+      "evidence": "其中西汉早期墓17座，西汉中期7座，西汉晚期1座，东汉中期1座。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "各时期墓葬出土铜印比例",
+      "feature_type": "ratio",
+      "value": "西汉早期19.2%（5/26），西汉中期7.7%（2/26），西汉晚期53.8%（14/26），东汉早期7.7%（2/26），东汉中期3.8%（1/26），东汉晚期7.7%（2/26）",
+      "dynasty_signal": "西汉晚期（峰值）",
+      "evidence": "其中西汉早期5座，西汉中期2座，西汉晚期14座，东汉早期2座，东汉中期1座，东汉晚期2座。",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "滑石印区域分布特征",
+      "feature_type": "boolean",
+      "value": "明显区域性特征（以长沙为核心的楚地，部分向南延伸至两广地区）",
+      "dynasty_signal": "西汉（区域性标志）",
+      "evidence": "这种无字印具有明显的区域性特征，目前的发现主要集中在以长沙为核心的楚地，部分向南延伸至两广地区。",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "珍贵材质印（玛瑙、水晶、绿松石）数量",
+      "feature_type": "numeric",
+      "value": "至少5枚（南越王墓4枚+广陵王墓1枚+姚庄102号墓1枚）",
+      "dynasty_signal": "西汉早期（高等级贵族）",
+      "evidence": "玛瑙、水晶以及绿松石等均属于珍贵印材，从墓葬情况来看，其使用者也都是高等级贵族。",
+      "confidence": 0.8
+    },
+    {
+      "feature_name": "随葬无字印墓葬墓室面积下限",
+      "feature_type": "numeric",
+      "value": "8平方米",
+      "dynasty_signal": "汉代通用（西汉、东汉）",
+      "evidence": "随葬无字印的墓葬墓室面积大都在8平方米以上，无字印几乎未见于小型墓",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "同时随葬无字印和私印的墓葬数量",
+      "feature_type": "numeric",
+      "value": "11座",
+      "dynasty_signal": "汉代通用",
+      "evidence": "11座随葬无字印的汉墓中同时随葬了私印",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "仅随葬无字印而无私印的墓葬数量",
+      "feature_type": "numeric",
+      "value": "67座",
+      "dynasty_signal": "汉代通用",
+      "evidence": "另有67座墓中只随葬无字印而无私印",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "姚庄101号墓随葬铜印数量",
+      "feature_type": "numeric",
+      "value": "3枚",
+      "dynasty_signal": "西汉",
+      "evidence": "江苏邗江姚庄101号西汉墓随葬的3枚铜印，印文均被磨毁",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "姚庄102号墓随葬铜印数量",
+      "feature_type": "numeric",
+      "value": "2枚",
+      "dynasty_signal": "西汉",
+      "evidence": "相邻的102号西汉墓的2枚铜印和1枚玛瑙印的印文也被磨毁",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "姚庄102号墓随葬玛瑙印数量",
+      "feature_type": "numeric",
+      "value": "1枚",
+      "dynasty_signal": "西汉",
+      "evidence": "相邻的102号西汉墓的2枚铜印和1枚玛瑙印的印文也被磨毁",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "随葬无字印墓葬等级",
+      "feature_type": "categorical",
+      "value": "中高等级墓葬（墓室面积>8平方米）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "随葬无字印的墓葬大都属于中高等级墓葬，说明其使用者应具有较高的社会身份",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "无字印材质类型",
+      "feature_type": "categorical",
+      "value": "滑石印、铜印、玉印、玛瑙印",
+      "dynasty_signal": "汉代通用",
+      "evidence": "文中提及滑石印、铜印、玉印、玛瑙印等多种材质无字印，其中玉印制作精美且带有纹饰",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "墨书/朱书印材质限定",
+      "feature_type": "boolean",
+      "value": "仅见于滑石印和铜印，玉印未见书写痕迹",
+      "dynasty_signal": "汉代通用",
+      "evidence": "书写印文目前只见于滑石印和铜印，玉印几乎未见任何书写痕迹",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "印文被毁情况",
+      "feature_type": "boolean",
+      "value": "存在印文被刻意磨毁的情况",
+      "dynasty_signal": "西汉",
+      "evidence": "江苏邗江姚庄101号西汉墓3枚铜印、102号西汉墓2枚铜印和1枚玛瑙印的印文均被磨毁",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "无字印与私印组合关系",
+      "feature_type": "ratio",
+      "value": "11:67（同时随葬私印 vs 仅随葬无字印）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "11座墓同时随葬无字印和私印，67座墓仅随葬无字印而无私印",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "无字印性质判定",
+      "feature_type": "categorical",
+      "value": "明器官印（代表墓主社会身份或官职）",
+      "dynasty_signal": "汉代通用",
+      "evidence": "无字印的性质应是代表墓主社会身份或官职的明器官印，随葬无字印的墓主大都为贵族或官吏",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "印章材质类型",
+      "feature_type": "categorical",
+      "value": "铜印、玉印",
+      "dynasty_signal": "西汉通用、东汉通用",
+      "evidence": "马王堆2号墓出土的'轪侯之印'铜印与'长沙丞相'铜印；诸侯王墓发现的无字印规格较大；目前发现的玉无字印和铜无字印",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "印章印文类型",
+      "feature_type": "categorical",
+      "value": "刻铸印、墨书印、无字印",
+      "dynasty_signal": "西汉通用、东汉通用",
+      "evidence": "第一种是刻铸印，例如马王堆2号墓出土的'轪侯之印'铜印与'长沙丞相'铜印；第二种是上文提及的墨书印；第三种就是没有印文的无字印",
+      "confidence": 0.95
+    },
+    {
+      "feature_name": "无字印尺寸与正常官印的相对大小",
+      "feature_type": "categorical",
+      "value": "诸侯王墓无字印较大；玉无字印和铜无字印较小",
+      "dynasty_signal": "西汉通用、东汉通用",
+      "evidence": "除诸侯王墓发现的无字印规格较大外，目前发现的玉无字印和铜无字印尺寸明显小于正常的官印",
+      "confidence": 0.85
+    },
+    {
+      "feature_name": "无字印钮式类型",
+      "feature_type": "categorical",
+      "value": "私印钮式",
+      "dynasty_signal": "西汉通用、东汉通用",
+      "evidence": "其钮式也多为私印钮式，似是制作者有意识地强调其与实用官印的区别",
+      "confidence": 0.8
+    },
+    {
+      "feature_name": "印文官印的区域分布",
+      "feature_type": "categorical",
+      "value": "几乎只发现于南方地区，尤其集中在以长沙为核心的楚地；长安地区未发现",
+      "dynasty_signal": "西汉晚期、东汉晚期",
+      "evidence": "前两种带有印文的明器官印几乎只发现于南方地区，尤其集中在以长沙为核心的楚地...因为官僚贵族聚集的长安地区目前尚未发现一座西汉墓内随葬有印文的官印",
+      "confidence": 0.9
+    },
+    {
+      "feature_name": "东汉与西汉无字印数量比较",
+      "feature_type": "boolean",
+      "value": "东汉比西汉少",
+      "dynasty_signal": "区分东汉与西汉",
+      "evidence": "东汉比西汉无字印少很多，这或许和东汉时期对于随葬印章的礼制有了实际规定有关",
+      "confidence": 0.75
+    },
+    {
+      "feature_name": "官印绶带颜色等级差异",
+      "feature_type": "categorical",
+      "value": "不同等级赐予不同颜色绶带",
+      "dynasty_signal": "西汉通用、东汉通用",
+      "evidence": "所谓等级不同的官印被赐予不同颜色的绶带，即是寻求通过视觉上的差异构建等级秩序",
+      "confidence": 0.85
+    }
+  ]
+}
