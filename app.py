@@ -32,13 +32,7 @@ st.markdown("""
     }
     
     .stApp {
-        background: #d6c8a0;
-        background-image: 
-            linear-gradient(180deg, rgba(214,200,160,0.3) 0%, rgba(214,200,160,0.95) 100%),
-            url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=1920&q=80');
-        background-size: cover;
-        background-position: center bottom;
-        background-attachment: fixed;
+        background: #ffffff;
     }
     
     /* ===== 隐藏默认元素 ===== */
@@ -46,22 +40,18 @@ st.markdown("""
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
     header[data-testid="stHeader"] {
-        background: rgba(255, 255, 255, 0.75) !important;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: #ffffff !important;
     }
     
     /* ===== 侧边栏 ===== */
     [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.90) !important;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-right: 1px solid rgba(0,0,0,0.08);
+        background: #f8f9fa !important;
+        border-right: 1px solid #dee2e6;
     }
     
     [data-testid="stSidebar"] .stMarkdown h3 {
         font-family: 'Noto Serif SC', serif;
-        color: #2c2c2c;
+        color: #111111;
         font-weight: 600;
         border-bottom: 2px solid #c0392b;
         padding-bottom: 0.5rem;
@@ -77,7 +67,7 @@ st.markdown("""
     .hero-subtitle {
         font-family: 'Noto Sans SC', sans-serif;
         font-size: 1rem;
-        color: #5a5a5a;
+        color: #333333;
         letter-spacing: 0.3em;
         margin-bottom: 0.8rem;
     }
@@ -86,7 +76,7 @@ st.markdown("""
         font-family: 'Noto Serif SC', 'Source Han Serif', serif;
         font-size: 3rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: #111111;
         letter-spacing: 0.15em;
         margin: 0.5rem 0;
         line-height: 1.4;
@@ -107,17 +97,15 @@ st.markdown("""
     
     .hero-description {
         font-size: 0.95rem;
-        color: #666;
+        color: #444444;
         margin-top: 1.2rem;
         letter-spacing: 0.1em;
     }
     
     /* ===== 指标卡片 ===== */
     .metric-card {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(0,0,0,0.08);
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 1.2rem 1rem;
         text-align: center;
@@ -133,13 +121,13 @@ st.markdown("""
         font-family: 'Noto Serif SC', serif;
         font-size: 2.2rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: #111111;
         margin: 0.3rem 0;
     }
     
     .metric-label {
         font-size: 0.85rem;
-        color: #666;
+        color: #333333;
         letter-spacing: 0.1em;
     }
     
@@ -148,7 +136,7 @@ st.markdown("""
         font-family: 'Noto Serif SC', serif;
         font-size: 1.4rem;
         font-weight: 600;
-        color: #2c2c2c;
+        color: #111111;
         padding: 1rem 0 0.8rem;
         border-bottom: 2px solid #c0392b;
         margin: 2rem 0 1.5rem 0;
@@ -164,10 +152,8 @@ st.markdown("""
     
     /* ===== 卡片 ===== */
     .content-card {
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(0,0,0,0.06);
+        background: #ffffff;
+        border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 1.2rem;
         margin: 0.8rem 0;
@@ -175,14 +161,14 @@ st.markdown("""
     }
     
     .content-card:hover {
-        border-color: rgba(192, 57, 43, 0.3);
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        border-color: #c0392b;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
     
     /* ===== 模式卡片 ===== */
     .pattern-card {
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid rgba(0,0,0,0.06);
+        background: #ffffff;
+        border: 1px solid #dee2e6;
         border-left: 3px solid #c0392b;
         border-radius: 0 6px 6px 0;
         padding: 1rem 1.2rem;
@@ -192,12 +178,12 @@ st.markdown("""
     .pattern-type {
         font-family: 'Noto Serif SC', serif;
         font-weight: 600;
-        color: #2c2c2c;
+        color: #111111;
         font-size: 0.95rem;
     }
     
     .pattern-example {
-        color: #888;
+        color: #555555;
         font-size: 0.85rem;
         margin-top: 0.3rem;
         font-style: italic;
@@ -214,40 +200,40 @@ st.markdown("""
     /* ===== 器物标签 ===== */
     .artifact-tag {
         display: inline-block;
-        background: rgba(192, 57, 43, 0.08);
+        background: #fce4ec;
         color: #8b2500;
         padding: 0.25rem 0.7rem;
         border-radius: 4px;
         margin: 0.25rem;
         font-size: 0.85rem;
-        border: 1px solid rgba(192, 57, 43, 0.15);
+        border: 1px solid #f8bbd0;
     }
     
     .artifact-tag.copper { 
-        background: rgba(184, 115, 51, 0.1); 
+        background: #fff3e0; 
         color: #8b4513; 
-        border-color: rgba(184, 115, 51, 0.2);
+        border-color: #ffcc80;
     }
     .artifact-tag.pottery { 
-        background: rgba(139, 90, 43, 0.1); 
+        background: #efebe9; 
         color: #654321; 
-        border-color: rgba(139, 90, 43, 0.2);
+        border-color: #d7ccc8;
     }
     .artifact-tag.jade { 
-        background: rgba(46, 125, 50, 0.1); 
+        background: #e8f5e9; 
         color: #2e7d32; 
-        border-color: rgba(46, 125, 50, 0.2);
+        border-color: #a5d6a7;
     }
     .artifact-tag.gold { 
-        background: rgba(255, 193, 7, 0.1); 
+        background: #fffde7; 
         color: #f57f17; 
-        border-color: rgba(255, 193, 7, 0.2);
+        border-color: #fff59d;
     }
     
     /* ===== 墓葬卡片 ===== */
     .tomb-card {
-        background: rgba(255, 255, 255, 0.90);
-        border: 1px solid rgba(0,0,0,0.08);
+        background: #ffffff;
+        border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 1.5rem;
         margin: 1rem 0;
@@ -257,17 +243,17 @@ st.markdown("""
         font-family: 'Noto Serif SC', serif;
         font-size: 1.3rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: #111111;
     }
     
     .tomb-structure {
         display: inline-block;
-        background: rgba(192, 57, 43, 0.08);
+        background: #fce4ec;
         color: #8b2500;
         padding: 0.2rem 0.8rem;
         border-radius: 4px;
         font-size: 0.85rem;
-        border: 1px solid rgba(192, 57, 43, 0.15);
+        border: 1px solid #f8bbd0;
     }
     
     /* ===== 按钮 ===== */
@@ -289,9 +275,9 @@ st.markdown("""
     
     /* ===== 下载按钮 ===== */
     .stDownloadButton > button {
-        background: rgba(255, 255, 255, 0.90) !important;
-        color: #2c2c2c !important;
-        border: 1px solid rgba(0,0,0,0.15) !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #dee2e6 !important;
         border-radius: 6px !important;
     }
     
@@ -302,13 +288,13 @@ st.markdown("""
     
     /* ===== 通知横幅 ===== */
     .notice-banner {
-        background: rgba(238, 245, 252, 0.9);
-        color: #2980b9;
+        background: #e3f2fd;
+        color: #1565c0;
         font-size: 0.9rem;
         padding: 0.8rem 1.2rem;
         border-radius: 6px;
         margin: 1rem 0;
-        border: 1px solid rgba(41, 128, 185, 0.15);
+        border: 1px solid #bbdefb;
     }
     
     /* ===== 分隔线 ===== */
@@ -328,15 +314,15 @@ st.markdown("""
     /* ===== Expander ===== */
     .streamlit-expanderHeader {
         font-family: 'Noto Serif SC', serif !important;
-        background: rgba(255, 255, 255, 0.85) !important;
+        background: #f8f9fa !important;
         border-radius: 8px !important;
-        border: 1px solid rgba(0,0,0,0.06) !important;
+        border: 1px solid #dee2e6 !important;
     }
     
     .streamlit-expanderContent {
-        background: rgba(255, 255, 255, 0.80) !important;
+        background: #ffffff !important;
         border-radius: 0 0 8px 8px !important;
-        border: 1px solid rgba(0,0,0,0.06) !important;
+        border: 1px solid #dee2e6 !important;
         border-top: none !important;
     }
     
@@ -562,8 +548,8 @@ def main():
                     height=350,
                     showlegend=False,
                     margin=dict(l=0, r=0, t=30, b=0),
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='#ffffff',
+                    plot_bgcolor='#ffffff',
                     font=dict(family='Noto Sans SC')
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -621,8 +607,8 @@ def main():
                 fig.update_layout(
                     height=300, 
                     margin=dict(l=0, r=0, t=30, b=0),
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='#ffffff',
+                    plot_bgcolor='#ffffff',
                     font=dict(family='Noto Sans SC')
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -642,8 +628,8 @@ def main():
                 fig.update_layout(
                     height=300, 
                     margin=dict(l=0, r=0, t=30, b=0),
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='#ffffff',
+                    plot_bgcolor='#ffffff',
                     font=dict(family='Noto Sans SC')
                 )
                 st.plotly_chart(fig, use_container_width=True)
