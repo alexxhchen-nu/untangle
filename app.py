@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 计数特征提取器 - 考古简报智能分析工具
-专业的考古简报计数特征提取与分析平台
+新中式数字古典主义风格
 """
 
 import streamlit as st
@@ -16,203 +16,343 @@ from extractor_v5 import extract_v5
 # ========== 页面配置 ==========
 st.set_page_config(
     page_title="计数特征提取器 | 考古简报智能分析",
-    page_icon="📊",
+    page_icon="鼎",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ========== 自定义样式 ==========
 st.markdown("""
 <style>
-    /* 全局字体 */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
     
+    /* ===== 全局 ===== */
     * {
-        font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Heiti SC', sans-serif;
     }
     
-    /* 主标题 */
-    .main-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1a1a2e;
-        text-align: center;
-        margin: 0.5rem 0;
-        letter-spacing: 0.05em;
+    .stApp {
+        background: #d6c8a0;
+        background-image: 
+            linear-gradient(180deg, rgba(214,200,160,0.3) 0%, rgba(214,200,160,0.95) 100%),
+            url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=1920&q=80');
+        background-size: cover;
+        background-position: center bottom;
+        background-attachment: fixed;
     }
     
-    .sub-title {
-        font-size: 1rem;
-        color: #666;
+    /* ===== 隐藏默认元素 ===== */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stDeployButton {display: none;}
+    header[data-testid="stHeader"] {
+        background: rgba(255, 255, 255, 0.75) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    
+    /* ===== 侧边栏 ===== */
+    [data-testid="stSidebar"] {
+        background: rgba(255, 255, 255, 0.90) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-right: 1px solid rgba(0,0,0,0.08);
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        font-family: 'Noto Serif SC', serif;
+        color: #2c2c2c;
+        font-weight: 600;
+        border-bottom: 2px solid #c0392b;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* ===== Hero 区域 ===== */
+    .hero-container {
         text-align: center;
+        padding: 3rem 2rem 2rem;
         margin-bottom: 2rem;
     }
     
-    /* 卡片样式 */
+    .hero-subtitle {
+        font-family: 'Noto Sans SC', sans-serif;
+        font-size: 1rem;
+        color: #5a5a5a;
+        letter-spacing: 0.3em;
+        margin-bottom: 0.8rem;
+    }
+    
+    .hero-title {
+        font-family: 'Noto Serif SC', 'Source Han Serif', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        letter-spacing: 0.15em;
+        margin: 0.5rem 0;
+        line-height: 1.4;
+    }
+    
+    .hero-seal {
+        display: inline-block;
+        border: 2px solid #c0392b;
+        color: #c0392b;
+        padding: 6px 14px;
+        font-size: 14px;
+        font-family: 'Noto Serif SC', serif;
+        transform: rotate(-6deg);
+        margin-left: 1rem;
+        vertical-align: middle;
+        line-height: 1.2;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        color: #666;
+        margin-top: 1.2rem;
+        letter-spacing: 0.1em;
+    }
+    
+    /* ===== 指标卡片 ===== */
     .metric-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1.2rem;
-        border-radius: 12px;
-        color: white;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 8px;
+        padding: 1.2rem 1rem;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        border-color: #c0392b;
+        box-shadow: 0 4px 20px rgba(192, 57, 43, 0.12);
     }
     
     .metric-value {
-        font-size: 2rem;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 2.2rem;
         font-weight: 700;
+        color: #1a1a1a;
         margin: 0.3rem 0;
     }
     
     .metric-label {
         font-size: 0.85rem;
-        opacity: 0.9;
+        color: #666;
+        letter-spacing: 0.1em;
     }
     
-    /* 区域标题 */
+    /* ===== 区域标题 ===== */
     .section-header {
-        font-size: 1.3rem;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 1.4rem;
         font-weight: 600;
-        color: #1a1a2e;
-        padding: 0.8rem 0;
-        border-bottom: 3px solid #667eea;
-        margin: 1.5rem 0 1rem 0;
+        color: #2c2c2c;
+        padding: 1rem 0 0.8rem;
+        border-bottom: 2px solid #c0392b;
+        margin: 2rem 0 1.5rem 0;
+        letter-spacing: 0.1em;
     }
     
-    /* 模式卡片 */
-    .pattern-card {
-        background: white;
-        border: 1px solid #e8e8e8;
+    .section-header::before {
+        content: "◆";
+        color: #c0392b;
+        margin-right: 0.5rem;
+        font-size: 0.8em;
+    }
+    
+    /* ===== 卡片 ===== */
+    .content-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(0,0,0,0.06);
         border-radius: 8px;
-        padding: 1rem;
-        margin: 0.5rem 0;
+        padding: 1.2rem;
+        margin: 0.8rem 0;
         transition: all 0.2s ease;
     }
     
-    .pattern-card:hover {
-        border-color: #667eea;
-        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15);
+    .content-card:hover {
+        border-color: rgba(192, 57, 43, 0.3);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    
+    /* ===== 模式卡片 ===== */
+    .pattern-card {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-left: 3px solid #c0392b;
+        border-radius: 0 6px 6px 0;
+        padding: 1rem 1.2rem;
+        margin: 0.6rem 0;
     }
     
     .pattern-type {
+        font-family: 'Noto Serif SC', serif;
         font-weight: 600;
-        color: #667eea;
-        font-size: 0.9rem;
+        color: #2c2c2c;
+        font-size: 0.95rem;
     }
     
     .pattern-example {
-        color: #666;
+        color: #888;
         font-size: 0.85rem;
         margin-top: 0.3rem;
+        font-style: italic;
     }
     
     .pattern-count {
+        font-family: 'Noto Serif SC', serif;
         font-weight: 700;
-        color: #1a1a2e;
+        color: #c0392b;
         float: right;
+        font-size: 1.1rem;
     }
     
-    /* 器物标签 */
+    /* ===== 器物标签 ===== */
     .artifact-tag {
         display: inline-block;
-        background: #f0f2ff;
-        color: #667eea;
-        padding: 0.2rem 0.6rem;
+        background: rgba(192, 57, 43, 0.08);
+        color: #8b2500;
+        padding: 0.25rem 0.7rem;
         border-radius: 4px;
-        margin: 0.2rem;
+        margin: 0.25rem;
         font-size: 0.85rem;
+        border: 1px solid rgba(192, 57, 43, 0.15);
     }
     
-    .artifact-tag.copper { background: #fff3e0; color: #e65100; }
-    .artifact-tag.pottery { background: #fce4ec; color: #c62828; }
-    .artifact-tag.jade { background: #e8f5e9; color: #2e7d32; }
-    .artifact-tag.gold { background: #fff8e1; color: #f57f17; }
+    .artifact-tag.copper { 
+        background: rgba(184, 115, 51, 0.1); 
+        color: #8b4513; 
+        border-color: rgba(184, 115, 51, 0.2);
+    }
+    .artifact-tag.pottery { 
+        background: rgba(139, 90, 43, 0.1); 
+        color: #654321; 
+        border-color: rgba(139, 90, 43, 0.2);
+    }
+    .artifact-tag.jade { 
+        background: rgba(46, 125, 50, 0.1); 
+        color: #2e7d32; 
+        border-color: rgba(46, 125, 50, 0.2);
+    }
+    .artifact-tag.gold { 
+        background: rgba(255, 193, 7, 0.1); 
+        color: #f57f17; 
+        border-color: rgba(255, 193, 7, 0.2);
+    }
     
-    /* 墓葬卡片 */
+    /* ===== 墓葬卡片 ===== */
     .tomb-card {
-        background: white;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.90);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 8px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    
-    .tomb-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.8rem;
-        border-bottom: 1px solid #f0f0f0;
     }
     
     .tomb-id {
-        font-size: 1.2rem;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 1.3rem;
         font-weight: 700;
-        color: #667eea;
+        color: #1a1a1a;
     }
     
     .tomb-structure {
-        background: #f8f9fa;
-        padding: 0.3rem 0.8rem;
+        display: inline-block;
+        background: rgba(192, 57, 43, 0.08);
+        color: #8b2500;
+        padding: 0.2rem 0.8rem;
         border-radius: 4px;
         font-size: 0.85rem;
-        color: #666;
+        border: 1px solid rgba(192, 57, 43, 0.15);
     }
     
-    /* 统计表格 */
-    .stat-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .stat-table th {
-        background: #f8f9fa;
-        padding: 0.6rem;
-        text-align: left;
-        font-weight: 600;
-        color: #1a1a2e;
-        border-bottom: 2px solid #667eea;
-    }
-    
-    .stat-table td {
-        padding: 0.6rem;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    
-    /* 按钮样式 */
+    /* ===== 按钮 ===== */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 0.6rem 1.5rem;
-        font-weight: 600;
-        transition: all 0.2s ease;
+        background: #c0392b !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 6px !important;
+        padding: 0.6rem 1.5rem !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.05em;
+        transition: all 0.2s ease !important;
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        background: #a93226 !important;
+        box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3) !important;
     }
     
-    /* 隐藏默认元素 */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    .stDeployButton {display: none;}
-    
-    /* 侧边栏样式 */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    /* ===== 下载按钮 ===== */
+    .stDownloadButton > button {
+        background: rgba(255, 255, 255, 0.90) !important;
+        color: #2c2c2c !important;
+        border: 1px solid rgba(0,0,0,0.15) !important;
+        border-radius: 6px !important;
     }
     
-    /* 分隔线 */
+    .stDownloadButton > button:hover {
+        border-color: #c0392b !important;
+        color: #c0392b !important;
+    }
+    
+    /* ===== 通知横幅 ===== */
+    .notice-banner {
+        background: rgba(238, 245, 252, 0.9);
+        color: #2980b9;
+        font-size: 0.9rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        border: 1px solid rgba(41, 128, 185, 0.15);
+    }
+    
+    /* ===== 分隔线 ===== */
     hr {
         border: none;
         height: 1px;
-        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        background: linear-gradient(90deg, transparent, rgba(192, 57, 43, 0.3), transparent);
         margin: 2rem 0;
+    }
+    
+    /* ===== 数据表格 ===== */
+    .stDataFrame {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    /* ===== Expander ===== */
+    .streamlit-expanderHeader {
+        font-family: 'Noto Serif SC', serif !important;
+        background: rgba(255, 255, 255, 0.85) !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(0,0,0,0.06) !important;
+    }
+    
+    .streamlit-expanderContent {
+        background: rgba(255, 255, 255, 0.80) !important;
+        border-radius: 0 0 8px 8px !important;
+        border: 1px solid rgba(0,0,0,0.06) !important;
+        border-top: none !important;
+    }
+    
+    /* ===== 滚动条 ===== */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(192, 57, 43, 0.2);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(192, 57, 43, 0.4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -243,15 +383,21 @@ def get_artifact_class(name: str) -> str:
 def main():
     """主函数"""
     
-    # ========== 标题区域 ==========
-    st.markdown('<div class="main-title">📊 计数特征提取器</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">考古简报智能分析工具 · 两阶段提取技术</div>', unsafe_allow_html=True)
-    
-    st.markdown("---")
+    # ========== Hero 区域 ==========
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-subtitle">考古简报智能分析工具</div>
+        <div class="hero-title">
+            计数特征提取器
+            <span class="hero-seal">AI<br>驅動版</span>
+        </div>
+        <div class="hero-description">两阶段智能提取 · 模式发现与精确提取</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # ========== 侧边栏 ==========
     with st.sidebar:
-        st.markdown("### 📁 数据输入")
+        st.markdown("### 数据输入")
         
         input_method = st.radio(
             "选择输入方式",
@@ -269,7 +415,7 @@ def main():
             )
             if uploaded_file:
                 text_content = uploaded_file.read().decode("utf-8")
-                st.success(f"✅ 已加载: {uploaded_file.name}")
+                st.success(f"已加载: {uploaded_file.name}")
                 
         elif input_method == "粘贴文本":
             text_content = st.text_area(
@@ -289,27 +435,28 @@ def main():
                 if selected:
                     with open(selected, 'r', encoding='utf-8') as f:
                         text_content = f.read()
-                    st.success(f"✅ 已加载: {Path(selected).name}")
+                    st.success(f"已加载: {Path(selected).name}")
         
         st.markdown("---")
         
-        st.markdown("### ℹ️ 功能说明")
+        st.markdown("### 功能说明")
         st.markdown("""
         **阶段一：模式发现**
         - 自动扫描全文
-        - 识别所有计数模式
-        - 统计模式频率
+        - 识别计数模式
+        - 统计频率分布
         
         **阶段二：精确提取**
-        - 基于发现的模式
-        - 按墓葬提取数据
-        - 生成结构化报告
+        - 基于模式提取
+        - 按墓葬组织
+        - 结构化输出
         """)
         
         st.markdown("---")
         st.markdown(
-            '<div style="text-align: center; color: #999; font-size: 0.8rem;">'
-            '计数特征提取器 v1.0<br>考古简报智能分析工具'
+            '<div style="text-align: center; color: #999; font-size: 0.8rem; padding: 1rem 0;">'
+            '<span style="font-family: Noto Serif SC, serif;">计数特征提取器</span><br>'
+            'v1.0 · 考古简报智能分析'
             '</div>',
             unsafe_allow_html=True
         )
@@ -318,10 +465,13 @@ def main():
     if not text_content:
         # 空状态
         st.markdown("""
-        <div style="text-align: center; padding: 4rem 2rem; color: #999;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
-            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">开始分析</div>
-            <div>请在左侧上传文件或粘贴文本</div>
+        <div class="content-card" style="text-align: center; padding: 3rem 2rem; margin: 2rem 0;">
+            <div style="font-family: 'Noto Serif SC', serif; font-size: 1.2rem; color: #666; margin-bottom: 0.5rem;">
+                请上传文件或粘贴文本以开始分析
+            </div>
+            <div style="color: #999; font-size: 0.9rem;">
+                支持 Markdown、纯文本格式的考古简报
+            </div>
         </div>
         """, unsafe_allow_html=True)
         return
@@ -374,7 +524,7 @@ def main():
     st.markdown("<hr>", unsafe_allow_html=True)
     
     # ========== 阶段一：模式发现 ==========
-    st.markdown('<div class="section-header">🔍 阶段一：模式发现</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">阶段一：模式发现</div>', unsafe_allow_html=True)
     
     discovered_patterns = phase1.get('discovered_patterns', [])
     
@@ -382,8 +532,8 @@ def main():
         col_pattern1, col_pattern2 = st.columns([2, 1])
         
         with col_pattern1:
-            # 模式列表
-            st.markdown("**发现的计数模式：**")
+            st.markdown('<div class="content-card">', unsafe_allow_html=True)
+            st.markdown("**发现的计数模式**")
             
             for p in discovered_patterns[:8]:
                 st.markdown(f"""
@@ -393,9 +543,10 @@ def main():
                     <div class="pattern-example">示例: {p['example']}</div>
                 </div>
                 """, unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
         
         with col_pattern2:
-            # 模式分布图
             pattern_data = pd.DataFrame(discovered_patterns[:8])
             if not pattern_data.empty:
                 fig = px.bar(
@@ -405,20 +556,23 @@ def main():
                     orientation='h',
                     title="模式频率分布",
                     color='frequency',
-                    color_continuous_scale='Blues'
+                    color_continuous_scale=[[0, '#f5e6d3'], [1, '#c0392b']]
                 )
                 fig.update_layout(
                     height=350,
                     showlegend=False,
-                    margin=dict(l=0, r=0, t=30, b=0)
+                    margin=dict(l=0, r=0, t=30, b=0),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(family='Noto Sans SC')
                 )
                 st.plotly_chart(fig, use_container_width=True)
     
     # 发现的器物名称
     if artifact_names:
-        st.markdown("**发现的器物名称：**")
+        st.markdown('<div class="content-card">', unsafe_allow_html=True)
+        st.markdown("**发现的器物名称**")
         
-        # 按类别分组
         categories = {}
         for name in artifact_names:
             if '铜' in name:
@@ -441,16 +595,17 @@ def main():
                 tags_html += f'<span class="artifact-tag {css_class}">{name}</span>'
         
         st.markdown(f'<div style="margin: 0.5rem 0;">{tags_html}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<hr>", unsafe_allow_html=True)
     
     # ========== 阶段二：精确提取 ==========
-    st.markdown('<div class="section-header">📋 阶段二：精确提取</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">阶段二：精确提取</div>', unsafe_allow_html=True)
     
     tomb_data = phase2.get('tomb_data', [])
     
     if tomb_data:
-        # 类别分布图
+        # 图表
         category_dist = summary.get('category_distribution', {})
         if category_dist:
             col_chart1, col_chart2 = st.columns(2)
@@ -461,13 +616,18 @@ def main():
                     values=list(category_dist.values()),
                     title="器物类别分布",
                     hole=0.4,
-                    color_discrete_sequence=px.colors.qualitative.Set2
+                    color_discrete_sequence=['#c0392b', '#8b4513', '#2e7d32', '#f57f17', '#654321', '#888']
                 )
-                fig.update_layout(height=300, margin=dict(l=0, r=0, t=30, b=0))
+                fig.update_layout(
+                    height=300, 
+                    margin=dict(l=0, r=0, t=30, b=0),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(family='Noto Sans SC')
+                )
                 st.plotly_chart(fig, use_container_width=True)
             
             with col_chart2:
-                # 各墓葬器物数量
                 tomb_counts = [{'墓葬': t['tomb_id'], '数量': t['total_count']} for t in tomb_data]
                 df_counts = pd.DataFrame(tomb_counts)
                 
@@ -477,21 +637,27 @@ def main():
                     y='数量',
                     title="各墓葬器物数量",
                     color='数量',
-                    color_continuous_scale='Blues'
+                    color_continuous_scale=[[0, '#f5e6d3'], [1, '#c0392b']]
                 )
-                fig.update_layout(height=300, margin=dict(l=0, r=0, t=30, b=0))
+                fig.update_layout(
+                    height=300, 
+                    margin=dict(l=0, r=0, t=30, b=0),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(family='Noto Sans SC')
+                )
                 st.plotly_chart(fig, use_container_width=True)
         
         # 各墓葬详情
-        st.markdown("**各墓葬详细信息：**")
+        st.markdown('<div class="content-card">', unsafe_allow_html=True)
+        st.markdown("**各墓葬详细信息**")
         
         for tomb in tomb_data:
             tomb_id = tomb['tomb_id']
             structure = tomb['structure']
             
-            with st.expander(f"🏺 {tomb_id} · {structure.get('type', '未知结构')} · {tomb['total_count']} 件器物"):
+            with st.expander(f"{tomb_id} · {structure.get('type', '未知结构')} · {tomb['total_count']} 件器物"):
                 
-                # 墓葬形制
                 col_s1, col_s2, col_s3 = st.columns(3)
                 
                 with col_s1:
@@ -518,10 +684,9 @@ def main():
                     - 特征: {', '.join(tomb.get('special_features', [])) or '-'}
                     """)
                 
-                # 器物列表
                 artifacts = tomb.get('artifacts', [])
                 if artifacts:
-                    st.markdown("**器物列表：**")
+                    st.markdown("**器物列表**")
                     
                     artifact_data = []
                     for a in artifacts:
@@ -535,22 +700,25 @@ def main():
                     df = pd.DataFrame(artifact_data)
                     st.dataframe(df, use_container_width=True, hide_index=True)
                 
-                # 类别统计
                 categories = tomb.get('categories', {})
                 if categories:
                     st.markdown(f"**类别统计:** {' · '.join(f'{cat}({count})' for cat, count in categories.items())}")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<hr>", unsafe_allow_html=True)
     
     # ========== 导出区域 ==========
-    st.markdown('<div class="section-header">📥 导出结果</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">导出结果</div>', unsafe_allow_html=True)
+    
+    st.markdown('<div class="content-card">', unsafe_allow_html=True)
     
     col_dl1, col_dl2, col_dl3 = st.columns(3)
     
     with col_dl1:
         json_data = json.dumps(report, ensure_ascii=False, indent=2)
         st.download_button(
-            "📄 下载 JSON 报告",
+            "下载 JSON 报告",
             json_data,
             "计数特征报告.json",
             "application/json",
@@ -558,7 +726,6 @@ def main():
         )
     
     with col_dl2:
-        # CSV 器物明细
         csv_data = []
         for tomb in tomb_data:
             for artifact in tomb.get('artifacts', []):
@@ -574,7 +741,7 @@ def main():
         if csv_data:
             df_csv = pd.DataFrame(csv_data)
             st.download_button(
-                "📊 下载 CSV 明细",
+                "下载 CSV 明细",
                 df_csv.to_csv(index=False, encoding='utf-8-sig'),
                 "器物明细.csv",
                 "text/csv",
@@ -582,16 +749,17 @@ def main():
             )
     
     with col_dl3:
-        # CSV 模式统计
         if discovered_patterns:
             pattern_csv = pd.DataFrame(discovered_patterns)
             st.download_button(
-                "📈 下载模式统计",
+                "下载模式统计",
                 pattern_csv.to_csv(index=False, encoding='utf-8-sig'),
                 "模式统计.csv",
                 "text/csv",
                 use_container_width=True
             )
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def get_example_files():
