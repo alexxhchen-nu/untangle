@@ -1,0 +1,44 @@
+# Python 环境与缓存
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE / 工具目录
+.DS_Store
+.qoder/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 数据集与模型权重（体积大，不入库）
+datasets/
+*.pth
+
+# 数据目录（PDF 原文、OCR 提取结果、地图、脚本生成可视化输出）
+data/pdfs/
+data/extracted/
+data/maps/
+data/*.html
+data/*.json
+data/*.png
+
+# 运行日志与输出
+train_output.log
+output/
+
+# agents
+.mimocode
+.qoder
+.claude
+
+# R2 下载的期刊 PDF
+data/r2-journals/
+
+# SQLite 数据库（运行时生成）
+kaogu.db
+kaogu.db-shm
+kaogu.db-wal
+
+# 运行日志
+logs/

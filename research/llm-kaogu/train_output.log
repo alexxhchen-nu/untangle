@@ -1,0 +1,29 @@
+Device: cpu
+Classes: ['artifact', 'non_artifact']
+Train: 939, Val: 203, Test: 203
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /root/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+  0%|          | 0.00/44.7M [00:00<?, ?B/s] 65%|██████▍   | 28.9M/44.7M [00:00<00:00, 302MB/s]100%|██████████| 44.7M/44.7M [00:00<00:00, 313MB/s]
+
+Training for 5 epochs, lr=0.001
+--------------------------------------------------
+Epoch 1/5 | Train Loss: 0.5760 Acc: 0.711 | Val Loss: 0.5841 Acc: 0.704
+Epoch 2/5 | Train Loss: 0.3706 Acc: 0.867 | Val Loss: 0.5579 Acc: 0.709
+Epoch 3/5 | Train Loss: 0.3029 Acc: 0.902 | Val Loss: 0.5741 Acc: 0.709
+Epoch 4/5 | Train Loss: 0.2745 Acc: 0.898 | Val Loss: 0.5513 Acc: 0.729
+Epoch 5/5 | Train Loss: 0.2631 Acc: 0.896 | Val Loss: 0.5928 Acc: 0.729
+
+Test Accuracy: 0.803
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    artifact       0.75      0.92      0.82       102
+non_artifact       0.90      0.68      0.78       101
+
+    accuracy                           0.80       203
+   macro avg       0.82      0.80      0.80       203
+weighted avg       0.82      0.80      0.80       203
+
+Confusion Matrix:
+[[94  8]
+ [32 69]]
