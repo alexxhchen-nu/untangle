@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文献检索厅</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body class="is-sidebar-collapsed">
+    <button
+      id="sidebarToggle"
+      class="sidebar-tab"
+      type="button"
+      aria-controls="librarySidebar"
+      aria-expanded="false"
+    >
+      <span>目录</span>
+    </button>
+
+    <div class="shell">
+      <aside id="librarySidebar" class="sidebar" aria-label="目录控制">
+        <div class="brand">
+          <h1>文献检索厅</h1>
+        </div>
+
+        <label class="search-field">
+          <span>检索目录</span>
+          <input id="searchInput" type="search" placeholder="题名、系列、文件名" autocomplete="off" />
+        </label>
+
+        <div class="filters" aria-label="系列筛选">
+          <button class="filter is-active" type="button" data-series="all">全部</button>
+          <button class="filter" type="button" data-series="nsbd">南水北调</button>
+          <button class="filter" type="button" data-series="hebei">河北</button>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="catalogue" aria-label="文献目录">
+          <div class="section-heading">
+            <span class="section-note">点击文献卡片展开下载选项，再次点击收起</span>
+            <div class="series-picker">
+              <button
+                id="seriesChip"
+                class="series-chip"
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded="false"
+              >
+                全部文献
+              </button>
+              <div id="seriesMenu" class="series-menu" role="menu" hidden>
+                <button class="series-option is-active" type="button" role="menuitem" data-series="all">全部文献</button>
+                <button class="series-option" type="button" role="menuitem" data-series="nsbd">南水北调</button>
+                <button class="series-option" type="button" role="menuitem" data-series="hebei">河北</button>
+              </div>
+            </div>
+          </div>
+          <div id="bookList" class="book-list"></div>
+          <p id="emptyState" class="empty-state" hidden>没有匹配的文献。</p>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
