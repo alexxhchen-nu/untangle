@@ -1,0 +1,11 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.env
+.netlify/
+venv/
+.DS_Store
+fly.toml
+backend/Dockerfile
+*.egg-info/
