@@ -10,9 +10,9 @@ Parse archaeological documents (PDF, images, Office files) to Markdown via [Mine
 # With uv (recommended)
 uv pip install archaeo-doc-parser
 
-# Or from source
-git clone https://github.com/alexxhchen-nu/archaeo-doc-parser
-cd archaeo-doc-parser
+# Or from source (now in the kaogu-tools monorepo)
+git clone https://github.com/alexxhchen-nu/kaogu-tools
+cd kaogu-tools/parsers/archaeo-doc-parser
 uv pip install -e .
 ```
 

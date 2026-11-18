@@ -39,7 +39,7 @@
 
 ## MCP 服务器
 
-如需更强大的自定义格式解析，请使用 [MCP 服务器版本](https://github.com/alexxhchen-nu/archaeo-tomb-parser)。
+如需更强大的自定义格式解析，请使用 [MCP 服务器版本](https://github.com/alexxhchen-nu/kaogu-tools/tree/main/parsers/archaeo-tomb-parser)。
 
 ## License
 
