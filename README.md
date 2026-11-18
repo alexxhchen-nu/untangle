@@ -1,32 +1,69 @@
-# Kaogu Tools 
-A catalog of tools for archaeology literature analysis and data collection -- occassionally 3d visualization. 
+# Kaogu Tools
 
-## Stack 
-1. Frontend: Next.js 
+A catalog of tools for archaeology literature analysis and data collection, occasionally with 3D visualization.
+
+This repository is a monorepo. The Kaogu Tools app lives at the root (`frontend/`, `backend/`, `shared/`); the related archaeology projects live in the folders listed under [Monorepo layout](#monorepo-layout).
+
+## Quick start (root app)
+
+Python 3.12 (see `mise.toml`), [uv](https://docs.astral.sh/uv/) and [pnpm](https://pnpm.io/) are expected.
+
+Backend (FastAPI) on http://127.0.0.1:8000, health check at `/health`:
+
+```bash
+cp .env.example .env
+uv run uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Frontend (Next.js) on http://localhost:3000. First put this line in `frontend/.env.local` so the pages call the local backend:
+
+```dotenv
+NEXT_PUBLIC_KAOGU_API_BASE_URL=http://localhost:8000
+```
+
+Then:
+
+```bash
+cd frontend
+pnpm install
+pnpm dev
+```
+
+Tests, run from the repository root:
+
+```bash
+uv run python -m unittest shared/tests/test_dynamic_parser.py
+```
+
+Backend routes: `GET /health`, `POST /dynamic-parser/parse`, `POST /modelling/generate`, `POST /gis/generate`.
+
+## Stack
+
+1. Frontend: Next.js
 2. Backend: Python
-3. Data: BunnyCDN, CloudfareR2 
-4. API: FastAPI 
+3. Data: BunnyCDN, Cloudflare R2
+4. API: FastAPI
 5. LLM: Xiaomi Token Plan (China), Codex 5.5, Grok 4.3; allowing BYOK
-6. Agentic
-	- Tooling: CrewAI
-7. Deployment 
-	- Frontend: Netlify / Railway 
-	- Backend: Railway
-	- DNS: Cloudfare
-	- Caching: BunnyCDN 
+6. Agentic tooling: CrewAI
+7. Deployment
+   - Frontend: Netlify / Railway
+   - Backend: Railway
+   - DNS: Cloudflare
+   - Caching: BunnyCDN
 
-## Folder Structure 
-- Frontend 
-- Backend 
-- Shared 
-  - Data catalogu references to BunnyCDN and Cloudfare R2
+## Root app layout
 
+| Path | What it is |
+|------|------------|
+| `frontend/` | Next.js app: DynamicParser, Modelling, GIS and Library pages |
+| `backend/` | FastAPI API: tomb report parser, 3D modelling, GIS map generation |
+| `shared/data_catalogue.json` | Data catalogue references to BunnyCDN and Cloudflare R2 |
+| `shared/tests/` | Backend tests |
+| `.env.example` | Backend environment variables (copy to `.env`) |
 
 ## Monorepo layout
 
 In November 2026 the related archaeology repos under `alexxhchen-nu` were imported here with full git history (`git subtree`). The original repositories were not deleted.
-
-This repository’s original Kaogu Tools app stays at the root (`frontend/`, `backend/`, `shared/`). Everything else lives in the folders below.
 
 | Folder | Origin repo | What it is |
 |--------|-------------|------------|
@@ -45,4 +82,8 @@ This repository’s original Kaogu Tools app stays at the root (`frontend/`, `ba
 | `pipelines/kaogu-dynasty-feature-pipeline-qodercli/` | [kaogu-dynasty-feature-pipeline-qodercli](https://github.com/alexxhchen-nu/kaogu-dynasty-feature-pipeline-qodercli) | Notebook pipeline for dynasty feature discovery |
 | `pipelines/archaeological-count-extractor/` | [archaeological-count-extractor](https://github.com/alexxhchen-nu/archaeological-count-extractor) | Streamlit regex tool for count features in excavation reports |
 
-Secrets found in some origin histories (API keys and CDN credentials) were replaced with `REDACTED` before import. This repository is public; do not put real keys back into the tree.
+Each imported folder keeps its own dependencies and setup (and, where it had one, its own README); run it from inside that folder.
+
+## Secrets
+
+Secrets found in some origin histories (API keys and CDN credentials) were replaced with `REDACTED` before import. This repository is public; do not put real keys back into the tree. Local keys go in `.env`, which git ignores.

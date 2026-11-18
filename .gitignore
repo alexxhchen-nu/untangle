@@ -5,6 +5,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ipynb_checkpoints/
 .mypy_cache/
 .ruff_cache/
 
@@ -29,6 +30,8 @@ pnpm-debug.log*
 .claude/
 .vscode
 .zed
+.idea/
+.mimocode/
 
 # docs
 plan.md
