@@ -1,0 +1,17 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: Q0DeR-MaG1C-BrAnCh-Fo2-NoN-GiT-Or-No-C0MmIt
+nodes_managed: true
+exported_at: "2026-07-12T14:02:26Z"
+modules:
+    "":
+        dir_name: 考古器物计数特征提取 Pipeline（东汉→北魏朝代识别）
+        title: 考古器物计数特征提取 Pipeline（东汉→北魏朝代识别）
+        scope:
+            - data/
+            - dynasty_feature_pipeline.ipynb
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

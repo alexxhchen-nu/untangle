@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: ""
+title: 考古器物计数特征提取 Pipeline（东汉→北魏朝代识别）
+scope:
+    - data/
+    - dynasty_feature_pipeline.ipynb
+source_files: []
+depends_on: []
+related_to: []
