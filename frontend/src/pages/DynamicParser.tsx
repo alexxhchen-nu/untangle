@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, Fragment, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { RoughMark } from "@/components/rough-mark";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
@@ -129,7 +130,11 @@ function MarkedPassage({ text, tomb }: { text: string; tomb: TombRecord }) {
 
   marks.forEach((mark, i) => {
     if (mark.start > cursor) parts.push(<Fragment key={`t${i}`}>{text.slice(cursor, mark.start)}</Fragment>);
-    parts.push(<mark key={`m${i}`}>{text.slice(mark.start, mark.end)}</mark>);
+    parts.push(
+      <RoughMark key={`m${i}-${mark.start}`} className="source-hit" type="highlight" color="#fecaca" padding={[1, 0]} iterations={1} delay={i * 60}>
+        {text.slice(mark.start, mark.end)}
+      </RoughMark>,
+    );
     cursor = mark.end;
   });
   if (cursor < text.length) parts.push(<Fragment key="tail">{text.slice(cursor)}</Fragment>);
@@ -428,12 +433,12 @@ export default function DynamicParserPage() {
                                     }
                                   }}
                                 >
-                                  <td>{formatValue(tomb["墓葬编号"])}</td>
-                                  <td>{formatValue(tomb["年代"])}</td>
-                                  <td>{formatValue(tomb["墓葬形制"])}</td>
-                                  <td>{formatValue(tomb["墓向"])}</td>
-                                  <td>{formatDimensions(tomb)}</td>
-                                  <td>{artifactSummary(tomb["随葬器物"])}</td>
+                                  <td data-label="编号">{formatValue(tomb["墓葬编号"])}</td>
+                                  <td data-label="年代">{formatValue(tomb["年代"])}</td>
+                                  <td data-label="形制">{formatValue(tomb["墓葬形制"])}</td>
+                                  <td data-label="墓向">{formatValue(tomb["墓向"])}</td>
+                                  <td data-label="尺寸">{formatDimensions(tomb)}</td>
+                                  <td data-label="随葬器物">{artifactSummary(tomb["随葬器物"])}</td>
                                 </tr>
                               ))}
                             </tbody>

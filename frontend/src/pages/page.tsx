@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RoughMark } from "@/components/rough-mark";
 import { ChevronRight } from "@/lib/icons";
 import { TOOLS } from "@/lib/tools";
 
@@ -10,8 +11,19 @@ export default function LandingPage() {
           <span className="home-mark" aria-hidden="true">
             考
           </span>
-          <h1>考古工具箱</h1>
-          <p>检索考古报告，抽取墓葬数据，再画成遗址地图和三维模型。</p>
+          <h1>
+            考古
+            <RoughMark type="underline" color="#dc2626" strokeWidth={4} padding={[0, 2]} delay={200}>
+              工具箱
+            </RoughMark>
+          </h1>
+          <p>
+            检索考古报告，抽取
+            <RoughMark type="highlight" color="#fde047" delay={900}>
+              墓葬数据
+            </RoughMark>
+            ，再画成遗址地图和三维模型。
+          </p>
         </header>
 
         <nav className="toolbox-list" aria-label="考古工具入口">

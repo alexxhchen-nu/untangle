@@ -1,9 +1,24 @@
 import Link from 'next/link'
+import { RoughMark } from '@/components/rough-mark'
 import { ChevronRight } from '@/lib/icons'
 import type { ToolMeta } from '@/lib/tools'
 
 // Centered page header: crumbs on top, then one centered block with the
 // tool's icon, name and a single line of what it does.
+function withBrush(text: string, phrase?: string) {
+  if (!phrase || !text.includes(phrase)) return text
+  const [before, ...rest] = text.split(phrase)
+  return (
+    <>
+      {before}
+      <RoughMark type="highlight" color="#fde047" delay={250}>
+        {phrase}
+      </RoughMark>
+      {rest.join(phrase)}
+    </>
+  )
+}
+
 export function ToolHero({ tool }: { tool: ToolMeta }) {
   const Icon = tool.icon
   return (
@@ -19,7 +34,7 @@ export function ToolHero({ tool }: { tool: ToolMeta }) {
             <Icon className="h-6 w-6" strokeWidth={1.8} />
           </span>
           <h1>{tool.name}</h1>
-          <p className="tool-hero-copy">{tool.description}</p>
+          <p className="tool-hero-copy">{withBrush(tool.description, tool.highlight)}</p>
         </div>
       </div>
     </header>

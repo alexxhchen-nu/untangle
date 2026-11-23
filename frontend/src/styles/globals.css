@@ -2690,3 +2690,140 @@ html, body { background: #ffffff; color: var(--ink); }
 .parser-table td:nth-child(4),
 .parser-table td:nth-child(5) { white-space: nowrap; }
 .parser-table th, .parser-table td { padding: 0.625rem 0.625rem; font-size: 0.9375rem; }
+
+/* ============================================================
+   Brush highlights: a hand-painted stroke behind a few key words.
+   Used once per header and on values found in the source.
+   ============================================================ */
+.brush {
+  --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M3 9c30-5 62-3 96-4 33-1 63-3 98 0 2 7 1 16 2 22-1 3 0 6-3 7-34 3-66 1-99 2-31 1-62 3-95 1-2-6 0-13-1-19 0-3 1-6 2-9z' fill='%23fde047' fill-opacity='1'/%3E%3C/svg%3E");
+  padding: 0 0.2em;
+  margin: 0 -0.05em;
+  background: var(--brush) left center / 100% 86% no-repeat;
+  color: var(--ink);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  animation: brush-in 560ms var(--ease) 120ms both;
+}
+
+.brush--title {
+  --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M3 9c30-5 62-3 96-4 33-1 63-3 98 0 2 7 1 16 2 22-1 3 0 6-3 7-34 3-66 1-99 2-31 1-62 3-95 1-2-6 0-13-1-19 0-3 1-6 2-9z' fill='%23dc2626' fill-opacity='.9'/%3E%3C/svg%3E");
+  padding: 0 0.12em;
+  background-size: 100% 44%;
+  background-position: left 92%;
+}
+
+@keyframes brush-in {
+  from { background-size: 0% 86%; }
+}
+
+.brush--title { animation-name: brush-in-title; }
+@keyframes brush-in-title {
+  from { background-size: 0% 44%; }
+}
+
+/* Values found in the source get the same brush, so they stand out on
+   the page and in the source text alike */
+.source-segment mark {
+  padding: 0 0.15em;
+  margin: 0 -0.03em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M3 9c30-5 62-3 96-4 33-1 63-3 98 0 2 7 1 16 2 22-1 3 0 6-3 7-34 3-66 1-99 2-31 1-62 3-95 1-2-6 0-13-1-19 0-3 1-6 2-9z' fill='%23fecaca' fill-opacity='1'/%3E%3C/svg%3E") left center / 100% 88% no-repeat;
+  box-shadow: none;
+  color: #b91c1c;
+  font-weight: 600;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ============================================================
+   Mobile (≤ 640px): fixed-size icon tiles, compact stats, table rows
+   become labelled cards, 44px touch targets, inputs fit the panel
+   ============================================================ */
+.tool-hero-center .tool-hero-icon {
+  width: 3rem;
+  height: 3rem;
+  min-height: 0;
+  align-self: center;
+}
+
+.toolbox-home .toolbox-list-media {
+  width: 2.75rem;
+  height: 2.75rem;
+  min-height: 0;
+  align-self: center;
+}
+
+.file-picker input,
+.field-group select,
+.gis-options select,
+.tool-panel select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .tool-page-main { padding: 1rem 1rem 2rem; gap: 0.75rem; }
+  .tool-hero-center { padding: 1rem 0 0.5rem; }
+  .tool-hero-center h1 { font-size: 1.625rem; }
+  .tool-hero-center .tool-hero-copy { font-size: 0.9375rem; }
+  .tool-crumbs a { display: inline-flex; min-height: 2.75rem; align-items: center; }
+
+  .home-hero h1 { font-size: 2.125rem; }
+  .home-hero p { font-size: 1rem; }
+  .toolbox-home { padding: 2.5rem 1rem; gap: 2rem; align-content: start; }
+
+  .tool-panel { padding: 0.875rem; }
+
+  .stats-grid,
+  .parser-stats,
+  .model-stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  .stats-grid > div { padding: 0.5rem 0.625rem; }
+  .stats-grid dd { font-size: 1.25rem; }
+
+  .btn, .btn-sm, .source-edit-button, .source-cancel-button, .site-result-row a, .site-result-row button,
+  .result-viewer-tab, .library-filters .filter, .parser-result-actions button { min-height: 2.75rem; }
+
+  .lib-card-files .btn { flex: 1 1 0; }
+
+  /* Table rows as labelled cards */
+  .parser-table-wrap { border: 0; background: transparent; overflow: visible; }
+  .parser-table, .parser-table tbody, .parser-table tr, .parser-table td { display: block; width: 100%; min-width: 0; }
+  .parser-table thead { display: none; }
+  .parser-table tbody { display: grid; gap: 0.5rem; }
+  .parser-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem 0.75rem;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    padding: 0.75rem;
+  }
+  .parser-table tbody tr.is-selected { border-color: var(--seal); box-shadow: inset 3px 0 0 var(--seal); }
+  .parser-table tbody tr.is-selected td:first-child { box-shadow: none; }
+  .parser-table td { border: 0; padding: 0; white-space: normal !important; font-size: 0.9375rem; }
+  .parser-table td::before { content: attr(data-label); display: block; color: var(--muted); font-size: 0.75rem; }
+  .parser-table td:first-child,
+  .parser-table td:last-child { grid-column: 1 / -1; }
+  .parser-table td:first-child { font-size: 1.0625rem; font-weight: 600; }
+  .parser-table td:first-child::before { display: none; }
+
+  .evidence-card ul { grid-template-columns: 1fr 1fr; }
+  .result-viewer-frame { height: 70svh; min-height: 20rem; }
+  .result-viewer-open { margin-left: 0; }
+  .source-view { max-height: 60svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brush, .brush--title { animation: none; }
+}
+
+
+/* Rough Notation draws the strokes now; these only style the text inside */
+.brush { background: none; animation: none; padding: 0; margin: 0; }
+.rough-mark { position: relative; }
+.source-hit { color: #b91c1c; font-weight: 600; }
+.home-hero p .rough-mark { color: var(--ink); }
+/* Strokes sit under the text instead of covering it */
+.rough-annotation { mix-blend-mode: multiply; pointer-events: none; }
