@@ -18,7 +18,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-8">
             <Link
               href="/"
-              className="hidden h-9 w-9 items-center justify-center border border-foreground font-serif text-lg font-black md:flex"
+              className="hidden h-9 w-9 items-center justify-center border border-foreground font-serif text-lg font-medium md:flex"
               aria-label="考古工具箱首页"
             >
               考
@@ -31,19 +31,19 @@ export function SiteHeader() {
             className="flex h-24 w-24 flex-col items-center justify-center rounded-full border border-foreground outline outline-1 outline-offset-3 outline-foreground"
             aria-label="考古工具箱首页"
           >
-            <span className="font-serif text-4xl font-black leading-none">
+            <span className="font-serif text-4xl font-medium leading-none">
               考
             </span>
-            <span className="mt-2 text-[9px] font-bold">工具箱</span>
+            <span className="mt-2 text-[9px] font-medium">工具箱</span>
           </Link>
 
           <div className="flex items-center justify-end gap-8">
             <HeaderLinks tools={rightTools} pathname={pathname} align="right" />
-            <span className="hidden text-xs font-bold md:block">考古 · 数据</span>
+            <span className="hidden text-xs font-medium md:block">考古 · 数据</span>
           </div>
         </div>
 
-        <nav className="grid grid-cols-2 gap-px border-b border-foreground py-3 text-sm font-bold md:hidden">
+        <nav className="grid grid-cols-2 gap-px border-b border-foreground py-3 text-sm font-medium md:hidden">
           {TOOLS.map((tool) => {
             const active = pathname === tool.href
             return (
@@ -88,7 +88,7 @@ function HeaderLinks({
             key={tool.slug}
             href={tool.href}
             className={cn(
-              'text-sm font-black transition-colors hover:text-accent',
+              'text-sm font-medium transition-colors hover:text-accent',
               active && 'text-accent',
             )}
           >

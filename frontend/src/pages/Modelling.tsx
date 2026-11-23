@@ -199,7 +199,7 @@ export default function ModellingPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">生成模型</h2>
+                    <h2 className="font-serif text-xl font-medium">生成模型</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       上传墓葬 CSV 后，生成结果会在新标签页打开。
                     </p>
@@ -232,7 +232,7 @@ export default function ModellingPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">状态</h2>
+                    <h2 className="font-serif text-xl font-medium">状态</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       生成完成后可以重新打开最近一次模型。
                     </p>

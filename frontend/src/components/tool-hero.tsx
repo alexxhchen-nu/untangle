@@ -24,7 +24,7 @@ export function ToolHero({ tool }: { tool: ToolMeta }) {
             <p className="tool-hero-copy">{tool.description}</p>
           </div>
           <div className="tool-hero-mark">
-            <span className="font-serif text-3xl font-black">考</span>
+            <span className="font-serif text-3xl font-medium">考</span>
             <span className="mt-1 text-[10px]">工具</span>
           </div>
         </div>

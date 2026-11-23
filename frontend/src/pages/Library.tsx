@@ -139,7 +139,7 @@ export default function LibraryPage({
               <aside className="tool-panel library-controls" aria-label="资料库筛选">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">筛选</h2>
+                    <h2 className="font-serif text-xl font-medium">筛选</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       {seriesDescription}
                     </p>
@@ -186,7 +186,7 @@ export default function LibraryPage({
               <section className="tool-panel catalogue">
                 <div className="tool-panel-heading catalogue-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">文献目录</h2>
+                    <h2 className="font-serif text-xl font-medium">文献目录</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       选择条目后打开原始 PDF、解析 Markdown 或结构化 CSV。
                     </p>

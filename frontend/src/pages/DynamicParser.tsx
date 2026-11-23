@@ -295,7 +295,7 @@ export default function DynamicParserPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading source-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">{showSource ? "原文对照" : "输入文本"}</h2>
+                    <h2 className="font-serif text-xl font-medium">{showSource ? "原文对照" : "输入文本"}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       {showSource
                         ? "点任一段落或右侧表格行，两边会同步定位；红色标记是抽取到的字段在原文中的位置。"
@@ -341,7 +341,7 @@ export default function DynamicParserPage() {
               <section className="tool-panel model-panel parser-results-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">抽取结果</h2>
+                    <h2 className="font-serif text-xl font-medium">抽取结果</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       结果可继续导出为 CSV，用于三维建模或 GIS 分析。
                     </p>
