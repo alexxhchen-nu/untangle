@@ -1,9 +1,10 @@
 import Head from "next/head";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, Fragment, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
 import { Download, Loader2, Send } from "@/lib/icons";
 import { getTool } from "@/lib/tools";
+import { findMarks, segmentSource, valueAppears, type FieldEvidence } from "@/lib/source-links";
 
 type RunState = "idle" | "loading" | "done" | "error";
 
@@ -46,9 +47,19 @@ type ParserResponse = {
   error?: string;
 };
 
-const exampleInput = `## M1
-M1位于东区，年代战国。墓向南北向。墓口长2.5米，宽1.2米，深3.0米。
-埋葬方式土坑竖穴墓。封土直径4米。保存状态较好。出土器物2件：陶罐1件，铜剑1件。`;
+const exampleInput = `# 战国墓葬
+
+## M1
+M1位于东区，墓向南北向。墓口长2.5米，宽1.2米，深3.0米。
+埋葬方式土坑竖穴墓。封土直径4米。保存状态较好。出土器物2件：陶罐1件，铜剑1件。
+
+## M2
+M2位于M1西侧，墓向185°。墓口长3.1米，宽1.6米，深2.4米。
+土坑竖穴墓，被盗扰。出土器物3件：陶鼎1件，陶壶2件。
+
+## M5
+M5位于西区，打破M2。墓口长1.9米，宽0.9米。
+土坑竖穴墓。出土铜镜1件。`;
 
 function formatValue(value: number | string | null | undefined) {
   if (value === null || value === undefined || value === "") return "—";
@@ -79,6 +90,52 @@ function artifactSummary(artifacts: Artifact[] | undefined) {
     .join("、");
 }
 
+function evidenceFor(tomb: TombRecord, passage: string): (FieldEvidence & { empty: boolean })[] {
+  const fields: { label: string; value: string; numeric?: boolean }[] = [
+    { label: "年代", value: formatValue(tomb["年代"]) },
+    { label: "形制", value: formatValue(tomb["墓葬形制"]) },
+    { label: "墓向", value: formatValue(tomb["墓向"]) },
+    { label: "墓口长", value: formatValue(tomb["墓口长"]), numeric: true },
+    { label: "墓口宽", value: formatValue(tomb["墓口宽"]), numeric: true },
+    { label: "墓深", value: formatValue(tomb["墓深"]), numeric: true },
+  ];
+
+  return fields.map((field) => ({
+    label: field.label,
+    value: field.value,
+    found: field.value !== "—" && valueAppears(passage, field.value, field.numeric),
+    empty: field.value === "—",
+  }));
+}
+
+function markTerms(tomb: TombRecord) {
+  return [
+    { value: formatValue(tomb["墓葬编号"]) },
+    { value: formatValue(tomb["年代"]) },
+    { value: formatValue(tomb["墓葬形制"]) },
+    { value: formatValue(tomb["墓向"]) },
+    { value: formatValue(tomb["墓口长"]), numeric: true },
+    { value: formatValue(tomb["墓口宽"]), numeric: true },
+    { value: formatValue(tomb["墓深"]), numeric: true },
+    ...(tomb["随葬器物"] ?? []).map((a) => ({ value: a["器物名称"] ?? "" })),
+  ];
+}
+
+function MarkedPassage({ text, tomb }: { text: string; tomb: TombRecord }) {
+  const marks = findMarks(text, markTerms(tomb));
+  const parts: ReactElement[] = [];
+  let cursor = 0;
+
+  marks.forEach((mark, i) => {
+    if (mark.start > cursor) parts.push(<Fragment key={`t${i}`}>{text.slice(cursor, mark.start)}</Fragment>);
+    parts.push(<mark key={`m${i}`}>{text.slice(mark.start, mark.end)}</mark>);
+    cursor = mark.end;
+  });
+  if (cursor < text.length) parts.push(<Fragment key="tail">{text.slice(cursor)}</Fragment>);
+
+  return <>{parts}</>;
+}
+
 function downloadCsv(csv: string) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -94,16 +151,42 @@ function downloadCsv(csv: string) {
 
 export default function DynamicParserPage() {
   const [text, setText] = useState(exampleInput);
+  const [parsedText, setParsedText] = useState("");
   const [state, setState] = useState<RunState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ParserData | null>(null);
+  const [editing, setEditing] = useState(true);
+  const [selected, setSelected] = useState(0);
+  const sourceRefs = useRef<Record<number, HTMLElement | null>>({});
+  const rowRefs = useRef<Record<number, HTMLTableRowElement | null>>({});
 
   const tool = getTool("dynamic-parser");
-  const tombs = result?.json?.["墓葬列表"] ?? [];
+  const tombs = useMemo(() => result?.json?.["墓葬列表"] ?? [], [result]);
   const artifactCount = useMemo(
     () => tombs.reduce((total, tomb) => total + (tomb["随葬器物"]?.length ?? 0), 0),
     [tombs],
   );
+  const segments = useMemo(
+    () => segmentSource(parsedText, tombs.map((t) => t["墓葬编号"] ?? "")),
+    [parsedText, tombs],
+  );
+  const segmentByTomb = useMemo(() => {
+    const map = new Map<number, (typeof segments)[number]>();
+    segments.forEach((seg) => map.set(seg.tombIndex, seg));
+    return map;
+  }, [segments]);
+
+  const selectedTomb = tombs[selected];
+  const selectedSegment = segmentByTomb.get(selected);
+  const selectedPassage = selectedSegment ? parsedText.slice(selectedSegment.start, selectedSegment.end) : "";
+  const evidence = selectedTomb ? evidenceFor(selectedTomb, selectedPassage) : [];
+  const unverified = evidence.filter((e) => !e.found && !e.empty).length;
+  const emptyCount = evidence.filter((e) => e.empty).length;
+
+  useEffect(() => {
+    sourceRefs.current[selected]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    rowRefs.current[selected]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selected]);
 
   if (!tool) {
     return null;
@@ -134,12 +217,66 @@ export default function DynamicParserPage() {
       }
 
       setResult(payload.data ?? null);
+      setParsedText(trimmed);
+      setSelected(0);
+      setEditing(false);
       setState("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "墓葬文本抽取失败。");
       setState("error");
     }
   }
+
+  function renderSource() {
+    const blocks: ReactElement[] = [];
+    let cursor = 0;
+
+    segments.forEach((seg) => {
+      if (parsedText.slice(cursor, seg.start).trim()) {
+        blocks.push(
+          <div key={`gap-${cursor}`} className="source-gap">
+            {parsedText.slice(cursor, seg.start).trim()}
+          </div>,
+        );
+      }
+      const tomb = tombs[seg.tombIndex];
+      const active = seg.tombIndex === selected;
+      blocks.push(
+        <button
+          type="button"
+          key={`seg-${seg.tombIndex}`}
+          ref={(el) => {
+            sourceRefs.current[seg.tombIndex] = el;
+          }}
+          className={`source-segment${active ? " is-active" : ""}`}
+          aria-pressed={active}
+          onClick={() => setSelected(seg.tombIndex)}
+        >
+          <span className="source-segment-tag">{tomb["墓葬编号"]}</span>
+          <span className="source-segment-text">
+            {active ? (
+              <MarkedPassage text={parsedText.slice(seg.start, seg.end).trimEnd()} tomb={tomb} />
+            ) : (
+              parsedText.slice(seg.start, seg.end).trimEnd()
+            )}
+          </span>
+        </button>,
+      );
+      cursor = seg.end;
+    });
+
+    if (parsedText.slice(cursor).trim()) {
+      blocks.push(
+        <div key="gap-end" className="source-gap">
+          {parsedText.slice(cursor).trim()}
+        </div>,
+      );
+    }
+
+    return blocks;
+  }
+
+  const showSource = state === "done" && !editing;
 
   return (
     <>
@@ -156,36 +293,55 @@ export default function DynamicParserPage() {
           <section className="tool-workbench-section">
             <div className="model-workbench parser-workbench">
               <section className="tool-panel model-panel">
-                <div className="tool-panel-heading">
+                <div className="tool-panel-heading source-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">输入文本</h2>
+                    <h2 className="font-serif text-xl font-medium">{showSource ? "原文对照" : "输入文本"}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      粘贴墓葬段落、Markdown 或发掘简报正文。
+                      {showSource
+                        ? "点任一段落或右侧表格行，两边会同步定位；红色标记是抽取到的字段在原文中的位置。"
+                        : "粘贴墓葬段落、Markdown 或发掘简报正文。"}
                     </p>
                   </div>
+                  {showSource ? (
+                    <button type="button" className="source-edit-button" onClick={() => setEditing(true)}>
+                      编辑原文
+                    </button>
+                  ) : null}
                 </div>
 
-                <form className="parser-form" onSubmit={handleSubmit}>
-                  <textarea
-                    className="tool-textarea parser-textarea"
-                    value={text}
-                    onChange={(event) => setText(event.target.value)}
-                    spellCheck={false}
-                  />
-
-                  <div className="actions">
-                    <button type="submit" disabled={!text.trim() || state === "loading"}>
-                      {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                      {state === "loading" ? "抽取中..." : "抽取墓葬信息"}
-                    </button>
+                {showSource ? (
+                  <div className="source-view" aria-label="原文对照">
+                    {segments.length ? renderSource() : <div className="source-gap">{parsedText}</div>}
                   </div>
-                </form>
+                ) : (
+                  <form className="parser-form" onSubmit={handleSubmit}>
+                    <textarea
+                      className="tool-textarea parser-textarea"
+                      value={text}
+                      onChange={(event) => setText(event.target.value)}
+                      spellCheck={false}
+                      aria-label="墓葬报告文本"
+                    />
+
+                    <div className="actions">
+                      <button type="submit" disabled={!text.trim() || state === "loading"}>
+                        {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                        {state === "loading" ? "抽取中..." : state === "done" ? "重新抽取" : "抽取墓葬信息"}
+                      </button>
+                      {state === "done" ? (
+                        <button type="button" className="source-cancel-button" onClick={() => setEditing(false)}>
+                          返回对照
+                        </button>
+                      ) : null}
+                    </div>
+                  </form>
+                )}
               </section>
 
               <section className="tool-panel model-panel parser-results-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-black">抽取结果</h2>
+                    <h2 className="font-serif text-xl font-medium">抽取结果</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       结果可继续导出为 CSV，用于三维建模或 GIS 分析。
                     </p>
@@ -195,7 +351,7 @@ export default function DynamicParserPage() {
                 <div className="parser-result-body">
                   {state === "idle" ? (
                     <div className="tool-empty-state">
-                      <p>运行后会显示墓葬表格、Markdown 和 CSV 导出入口。</p>
+                      <p>运行后会显示墓葬表格，并和左侧原文逐段对照。</p>
                     </div>
                   ) : null}
 
@@ -207,7 +363,7 @@ export default function DynamicParserPage() {
                   ) : null}
 
                   {state === "error" && error ? (
-                    <div className="parser-error">{error}</div>
+                    <div className="parser-error" role="alert">{error}</div>
                   ) : null}
 
                   {state === "done" && result ? (
@@ -222,8 +378,10 @@ export default function DynamicParserPage() {
                           <dd>{artifactCount}</dd>
                         </div>
                         <div>
-                          <dt>CSV</dt>
-                          <dd>{result.csv ? "可下载" : "—"}</dd>
+                          <dt>原文定位</dt>
+                          <dd>
+                            {segments.length}/{tombs.length}
+                          </dd>
                         </div>
                       </dl>
 
@@ -242,7 +400,32 @@ export default function DynamicParserPage() {
                             </thead>
                             <tbody>
                               {tombs.map((tomb, index) => (
-                                <tr key={`${tomb["墓葬编号"] ?? "tomb"}-${index}`}>
+                                <tr
+                                  key={`${tomb["墓葬编号"] ?? "tomb"}-${index}`}
+                                  ref={(el) => {
+                                    rowRefs.current[index] = el;
+                                  }}
+                                  className={index === selected ? "is-selected" : undefined}
+                                  tabIndex={0}
+                                  aria-selected={index === selected}
+                                  onClick={() => setSelected(index)}
+                                  onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                      event.preventDefault();
+                                      setSelected(index);
+                                    }
+                                    if (event.key === "ArrowDown") {
+                                      event.preventDefault();
+                                      setSelected((i) => Math.min(i + 1, tombs.length - 1));
+                                      rowRefs.current[Math.min(index + 1, tombs.length - 1)]?.focus();
+                                    }
+                                    if (event.key === "ArrowUp") {
+                                      event.preventDefault();
+                                      setSelected((i) => Math.max(i - 1, 0));
+                                      rowRefs.current[Math.max(index - 1, 0)]?.focus();
+                                    }
+                                  }}
+                                >
                                   <td>{formatValue(tomb["墓葬编号"])}</td>
                                   <td>{formatValue(tomb["年代"])}</td>
                                   <td>{formatValue(tomb["墓葬形制"])}</td>
@@ -258,6 +441,42 @@ export default function DynamicParserPage() {
                         <div className="parser-empty-result">后端返回成功，但没有识别到墓葬记录。</div>
                       )}
 
+                      {selectedTomb ? (
+                        <section className="evidence-card" aria-label={`${selectedTomb["墓葬编号"]} 字段核对`}>
+                          <header>
+                            <h3>{formatValue(selectedTomb["墓葬编号"])} 字段核对</h3>
+                            <span className={unverified || emptyCount || !selectedSegment ? "evidence-flag" : "evidence-ok"}>
+                              {!selectedSegment
+                                ? "原文中未找到这座墓"
+                                : unverified
+                                  ? `${unverified} 项在原文中找不到，请人工核对`
+                                  : emptyCount
+                                    ? `已抽取字段都能在原文中找到 · ${emptyCount} 项未抽取`
+                                    : "所有字段都能在原文中找到"}
+                            </span>
+                          </header>
+                          {evidence.length ? (
+                            <ul>
+                              {evidence.map((item) => (
+                                <li
+                                  key={item.label}
+                                  className={item.empty ? "is-empty" : item.found ? undefined : "is-missing"}
+                                >
+                                  <span>{item.label}</span>
+                                  <strong>{item.value}</strong>
+                                  <em>{item.empty ? "未抽取，看原文补" : item.found ? "原文有" : "推断或待核"}</em>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="evidence-empty">这座墓没有抽取到可核对的字段。</p>
+                          )}
+                          {selectedTomb["随葬器物"]?.length ? (
+                            <p className="evidence-artifacts">随葬器物：{artifactSummary(selectedTomb["随葬器物"])}</p>
+                          ) : null}
+                        </section>
+                      ) : null}
+
                       <div className="parser-result-actions">
                         <button
                           type="button"
@@ -272,7 +491,7 @@ export default function DynamicParserPage() {
                       </div>
 
                       {result.markdown ? (
-                        <details className="parser-details" open>
+                        <details className="parser-details">
                           <summary>Markdown 预览</summary>
                           <pre>{result.markdown}</pre>
                         </details>
