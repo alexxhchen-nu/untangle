@@ -615,9 +615,8 @@
 }
 
 .tool-hero {
-  position: sticky;
-  z-index: 30;
-  top: 0;
+  position: relative;
+  z-index: 1;
   padding-bottom: clamp(0.8rem, 1.6vh, 1.2rem);
   background: var(--paper);
 }
@@ -1048,10 +1047,10 @@
 
 .library-controls {
   position: sticky;
-  top: 13rem;
+  top: 1rem;
   align-self: start;
   gap: 1rem;
-  max-height: calc(100svh - 14rem);
+  max-height: calc(100svh - 2rem);
   overflow: auto;
 }
 
@@ -1566,10 +1565,10 @@
 
 .toolbox-list-item:hover,
 .toolbox-list-item:focus-visible {
-  border-color: rgba(9, 9, 11, 0.24);
+  border-color: var(--ink);
   color: var(--ink);
-  background: #f8f8f7;
-  box-shadow: 0 1.15rem 1.75rem rgba(9, 9, 11, 0.18);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .toolbox-list-item:focus-visible {
@@ -2339,3 +2338,168 @@
 .library-count strong { font-size: 1.75rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .library-count span { font-size: 0.875rem; }
 .library-count em { font-size: 0.75rem; font-style: normal; }
+
+
+/* ============================================================
+   Readable type scale (one step larger than before, still calm)
+   body 15–16, secondary 14–15, labels 13, titles 28 / home 40
+   ============================================================ */
+body { font-size: 1rem; line-height: 1.6; }
+
+.tool-hero-box h1 { font-size: 1.75rem; line-height: 1.25; }
+.tool-hero-kicker { font-size: 0.9375rem; }
+.tool-hero-copy { max-width: 44rem; font-size: 1rem; line-height: 1.7; }
+.toolbox-root h1 { font-size: 2.5rem; }
+.toolbox-list-copy strong { font-size: 1.125rem; }
+.toolbox-list-copy em { font-size: 0.9375rem; }
+
+.tool-panel-heading h2 { font-size: 1.25rem; line-height: 1.35; }
+.tool-panel-heading p { font-size: 0.9375rem; line-height: 1.65; }
+
+.parser-table td { font-size: 0.9375rem; padding: 0.625rem 0.75rem; }
+.parser-table th { font-size: 0.8125rem; padding: 0.625rem 0.75rem; }
+.source-segment-text { font-size: 1rem; line-height: 1.9; }
+.source-segment-tag { font-size: 0.8125rem; }
+.evidence-card h3 { font-size: 1.0625rem; }
+.evidence-card li strong { font-size: 1rem; }
+.evidence-card li span, .evidence-flag, .evidence-ok { font-size: 0.875rem; }
+.evidence-card li em { font-size: 0.8125rem; }
+
+.lib-card-title { font-size: 1.0625rem; }
+.lib-card-desc { font-size: 0.9375rem; }
+.lib-card-series, .lib-tag { font-size: 0.8125rem; }
+
+.state-notice-copy strong { font-size: 1rem; }
+.state-notice-copy p { font-size: 0.875rem; }
+
+.stats-grid dt { font-size: 0.8125rem; }
+.stats-grid dd { font-size: 1.5rem; }
+
+.btn, .parser-result-actions button, .result-link, .toolbox-list-button { min-height: 2.5rem; font-size: 0.9375rem; }
+.btn-lg, .actions button[type="submit"] { min-height: 2.75rem; font-size: 1rem; }
+.btn-sm, .source-edit-button, .source-cancel-button, .site-result-row a { min-height: 2rem; font-size: 0.875rem; }
+
+/* ============================================================
+   Balance: on the parser, the source stays in view while the
+   results column scrolls, so neither side leaves an empty block
+   ============================================================ */
+@media (min-width: 901px) {
+  .parser-workbench { align-items: start; }
+
+  .parser-workbench > .tool-panel:first-child {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100svh - 2rem);
+  }
+
+  .parser-workbench > .tool-panel:first-child .source-view {
+    max-height: none;
+    min-height: 0;
+    flex: 1;
+  }
+}
+
+/* ============================================================
+   Interaction: one easing curve, short durations, named properties
+   ============================================================ */
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn,
+.actions button,
+.parser-result-actions button,
+.result-link,
+.toolbox-list-button,
+.source-edit-button,
+.source-cancel-button,
+.library-filters .filter,
+.site-result-row a {
+  transition: color 140ms var(--ease), background-color 140ms var(--ease), border-color 140ms var(--ease), transform 120ms var(--ease);
+}
+
+.btn:active,
+.actions button:active:not(:disabled),
+.parser-result-actions button:active:not(:disabled),
+.result-link:active,
+.source-edit-button:active,
+.source-cancel-button:active,
+.library-filters .filter:active,
+.site-result-row a:active {
+  transform: scale(0.98);
+}
+
+/* Visible keyboard focus everywhere, in the accent */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 2px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--ink);
+}
+
+/* Home cards: the whole card is the target */
+.toolbox-list-item { transition: border-color 140ms var(--ease); }
+.toolbox-list-item:hover { border-color: var(--ink); }
+.toolbox-list-arrow { transition: transform 160ms var(--ease), color 160ms var(--ease); }
+.toolbox-list-item:hover .toolbox-list-arrow { color: var(--ink); transform: translateX(3px); }
+
+/* Table rows and source passages */
+.parser-table tbody td { transition: background-color 140ms var(--ease); }
+.source-segment { transition: background-color 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease); }
+
+/* Library card opening */
+.lib-card-files { animation: rise-in 200ms var(--ease); }
+
+/* State notices and evidence card appear with a short fade */
+.state-notice,
+.evidence-card { animation: rise-in 220ms var(--ease); }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* File inputs: a real button and a readable file name */
+.file-picker input[type="file"] {
+  min-height: 2.75rem;
+  border: 1px dashed #d4d4d8;
+  border-radius: var(--radius-md);
+  background: #fafafa;
+  padding: 0.375rem;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: border-color 140ms var(--ease), background-color 140ms var(--ease);
+}
+
+.file-picker input[type="file"]:hover { border-color: var(--ink); background: #ffffff; }
+
+.file-picker input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  border: 1px solid #d4d4d8;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  padding: 0.5rem 0.875rem;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.file-picker input[type="file"]:hover::file-selector-button { border-color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
