@@ -23,7 +23,7 @@ export default function LandingPage() {
                 >
                   <span className="toolbox-list-media" data-index={tool.index}>
                     <span className="toolbox-list-icon">
-                      <Icon className="h-12 w-12" />
+                      <Icon className="h-6 w-6" />
                     </span>
                   </span>
                   <span className="toolbox-list-copy">
