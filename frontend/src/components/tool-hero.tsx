@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { RoughMark } from '@/components/rough-mark'
 import { ChevronRight } from '@/lib/icons'
 import type { ToolMeta } from '@/lib/tools'
 
@@ -10,7 +11,9 @@ function withBrush(text: string, phrase?: string) {
   return (
     <>
       {before}
-      <span className="brush">{phrase}</span>
+      <RoughMark type="highlight" color="#fde047" delay={250}>
+        {phrase}
+      </RoughMark>
       {rest.join(phrase)}
     </>
   )

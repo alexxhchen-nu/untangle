@@ -2818,3 +2818,12 @@ html, body { background: #ffffff; color: var(--ink); }
 @media (prefers-reduced-motion: reduce) {
   .brush, .brush--title { animation: none; }
 }
+
+
+/* Rough Notation draws the strokes now; these only style the text inside */
+.brush { background: none; animation: none; padding: 0; margin: 0; }
+.rough-mark { position: relative; }
+.source-hit { color: #b91c1c; font-weight: 600; }
+.home-hero p .rough-mark { color: var(--ink); }
+/* Strokes sit under the text instead of covering it */
+.rough-annotation { mix-blend-mode: multiply; pointer-events: none; }
