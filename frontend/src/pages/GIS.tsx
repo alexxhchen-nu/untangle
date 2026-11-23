@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
 import { FileUp, Loader2, MapPinned } from "@/lib/icons";
@@ -314,12 +315,22 @@ export default function GISPage() {
 
                 <div className={`model-status-panel gis-results-panel model-status-panel--${runState}`}>
                   {runState === "idle" ? (
-                    <div className="tool-empty-state compact-empty-state">
-                      <p>生成后会显示墓葬总数、站点数、坐标模式，并保留总览和站点地图入口。</p>
-                    </div>
+                    <StateNotice kind="empty" title="还没有生成地图" compact>
+                      生成后会显示墓葬总数、站点数、坐标模式，并保留总览和站点地图入口。
+                    </StateNotice>
                   ) : null}
 
-                  <p className="status">{status}</p>
+                  {runState === "error" ? (
+                    <StateNotice kind="error" title="生成没有成功" compact>
+                      {status}
+                    </StateNotice>
+                  ) : runState === "loading" ? (
+                    <StateNotice kind="loading" title="正在生成" compact>
+                      {status}
+                    </StateNotice>
+                  ) : (
+                    <p className="status">{status}</p>
+                  )}
 
                   {stats ? (
                     <dl className="stats-grid">
