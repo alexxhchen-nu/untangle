@@ -445,7 +445,7 @@ export default function DynamicParserPage() {
                         <section className="evidence-card" aria-label={`${selectedTomb["墓葬编号"]} 字段核对`}>
                           <header>
                             <h3>{formatValue(selectedTomb["墓葬编号"])} 字段核对</h3>
-                            <span className={unverified ? "evidence-flag" : "evidence-ok"}>
+                            <span className={unverified || emptyCount || !selectedSegment ? "evidence-flag" : "evidence-ok"}>
                               {!selectedSegment
                                 ? "原文中未找到这座墓"
                                 : unverified
