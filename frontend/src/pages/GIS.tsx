@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { ResultViewer } from "@/components/result-viewer";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
@@ -48,69 +49,6 @@ function formatSiteCount(count: number | undefined) {
   return typeof count === "number" ? `${count} 座墓葬` : "站点地图";
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function writeLoadingTab(tab: Window, filename: string) {
-  tab.document.open();
-  tab.document.write(`<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <title>正在生成遗址空间地图</title>
-  <style>
-    @font-face {
-      font-family: "Noto Sans SC";
-      src: url("/fonts/Noto/NotoSansSC-VariableFont_wght.ttf") format("truetype");
-      font-style: normal;
-      font-weight: 100 900;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: "Noto Serif SC";
-      src: url("/fonts/Noto/NotoSerifSC-Regular.ttf") format("truetype");
-      font-style: normal;
-      font-weight: 400;
-      font-display: swap;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #141417;
-      color: #e8e4da;
-      font-family: "Noto Sans SC", system-ui, sans-serif;
-    }
-    main { max-width: 520px; padding: 32px; line-height: 1.7; }
-    h1 { margin: 0 0 8px; font-family: "Noto Serif SC", serif; font-size: 22px; }
-    p { color: #aaa28f; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>正在生成遗址空间地图</h1>
-    <p>${filename} 上传完成后会在此标签页打开结果。</p>
-  </main>
-</body>
-</html>`);
-  tab.document.close();
-}
-
-function writeErrorTab(tab: Window, message: string) {
-  tab.document.open();
-  tab.document.write(`<pre style="white-space:pre-wrap;font:14px monospace;padding:24px">${escapeHtml(message)}</pre>`);
-  tab.document.close();
-}
-
 function revokeUrls(urls: string[]) {
   for (const url of urls) {
     URL.revokeObjectURL(url);
@@ -127,6 +65,7 @@ export default function GISPage() {
   const [stats, setStats] = useState<GISStats | null>(null);
   const [siteMaps, setSiteMaps] = useState<SiteMapResult[]>([]);
   const [overviewUrl, setOverviewUrl] = useState<string | null>(null);
+  const [activeMap, setActiveMap] = useState<string | null>(null);
   const objectUrlsRef = useRef<string[]>([]);
 
   useEffect(() => {
@@ -144,12 +83,6 @@ export default function GISPage() {
     event.preventDefault();
     if (!selectedFile || isGenerating) {
       return;
-    }
-
-    const resultTab = window.open("about:blank", "_blank");
-    if (resultTab) {
-      resultTab.opener = null;
-      writeLoadingTab(resultTab, selectedFile.name);
     }
 
     setIsGenerating(true);
@@ -203,14 +136,7 @@ export default function GISPage() {
       setStats(payload.data?.stats ?? null);
       setRunState("done");
 
-      const targetUrl = nextOverviewUrl ?? nextSiteMaps[0]?.url;
-      if (targetUrl) {
-        if (resultTab) {
-          resultTab.location.replace(targetUrl);
-        } else {
-          window.open(targetUrl, "_blank", "noopener,noreferrer");
-        }
-      }
+      setActiveMap(nextOverviewUrl ? "__overview" : nextSiteMaps[0]?.key ?? null);
 
       const total = payload.data?.stats?.total_tombs;
       const siteCount = payload.data?.stats?.site_count ?? nextSiteMaps.length;
@@ -224,9 +150,6 @@ export default function GISPage() {
       replaceGeneratedUrls([]);
       setRunState("error");
       setStats(null);
-      if (resultTab) {
-        writeErrorTab(resultTab, message);
-      }
       setStatus(message);
     } finally {
       setIsGenerating(false);
@@ -258,7 +181,7 @@ export default function GISPage() {
                   <div>
                     <h2 className="font-serif text-xl font-medium">生成地图</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      上传 CSV 后生成站点地图，结果会在新标签页打开。
+                      上传 CSV 后生成站点地图，地图会显示在下方。
                     </p>
                   </div>
                 </div>
@@ -297,7 +220,7 @@ export default function GISPage() {
                   <div className="actions">
                     <button type="submit" disabled={!selectedFile || isGenerating}>
                       {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
-                      {isGenerating ? "生成中..." : "生成并打开地图"}
+                      {isGenerating ? "生成中..." : "生成地图"}
                     </button>
                   </div>
                 </form>
@@ -350,10 +273,10 @@ export default function GISPage() {
                   ) : null}
 
                   {overviewUrl ? (
-                    <a className="result-link" href={overviewUrl} target="_blank" rel="noreferrer">
+                    <button type="button" className="result-link" onClick={() => setActiveMap("__overview")}>
                       <MapPinned className="h-4 w-4" />
-                      打开总览地图
-                    </a>
+                      查看总览地图
+                    </button>
                   ) : null}
 
                   {siteMaps.length > 0 ? (
@@ -365,10 +288,14 @@ export default function GISPage() {
                             <strong>{site.key}</strong>
                             <span>{formatSiteCount(site.count)}</span>
                           </div>
-                          <a href={site.url} target="_blank" rel="noreferrer">
+                          <button
+                            type="button"
+                            aria-pressed={activeMap === site.key}
+                            onClick={() => setActiveMap(site.key)}
+                          >
                             <MapPinned className="h-4 w-4" />
-                            打开地图
-                          </a>
+                            查看地图
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -377,6 +304,23 @@ export default function GISPage() {
               </section>
             </div>
           </section>
+
+          {overviewUrl || siteMaps.length > 0 ? (
+            <ResultViewer
+              title="地图"
+              items={[
+                ...(overviewUrl ? [{ key: "__overview", label: "总览", url: overviewUrl }] : []),
+                ...siteMaps.map((site) => ({
+                  key: site.key,
+                  label: site.key,
+                  url: site.url,
+                  meta: typeof site.count === "number" ? `${site.count}` : undefined,
+                })),
+              ]}
+              activeKey={activeMap}
+              onSelect={setActiveMap}
+            />
+          ) : null}
         </main>
       </div>
     </>

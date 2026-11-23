@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { ResultViewer } from "@/components/result-viewer";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
@@ -28,72 +29,9 @@ function formatStat(value: number | undefined) {
   return Number.isFinite(value) ? String(value) : "—";
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function writeLoadingTab(tab: Window, filename: string) {
-  tab.document.open();
-  tab.document.write(`<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <title>正在生成墓葬3D模型</title>
-  <style>
-    @font-face {
-      font-family: "Noto Sans SC";
-      src: url("/fonts/Noto/NotoSansSC-VariableFont_wght.ttf") format("truetype");
-      font-style: normal;
-      font-weight: 100 900;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: "Noto Serif SC";
-      src: url("/fonts/Noto/NotoSerifSC-Regular.ttf") format("truetype");
-      font-style: normal;
-      font-weight: 400;
-      font-display: swap;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #141417;
-      color: #e8e4da;
-      font-family: "Noto Sans SC", system-ui, sans-serif;
-    }
-    main { max-width: 520px; padding: 32px; line-height: 1.7; }
-    h1 { margin: 0 0 8px; font-family: "Noto Serif SC", serif; font-size: 22px; }
-    p { color: #aaa28f; }
-  </style>
-</head>
-<body>
-  <main>
-    <h1>正在生成墓葬3D模型</h1>
-    <p>${filename} 上传完成后会在此标签页打开结果。</p>
-  </main>
-</body>
-</html>`);
-  tab.document.close();
-}
-
-function writeErrorTab(tab: Window, message: string) {
-  tab.document.open();
-  tab.document.write(`<pre style="white-space:pre-wrap;font:14px monospace;padding:24px">${escapeHtml(message)}</pre>`);
-  tab.document.close();
-}
-
 export default function ModellingPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [status, setStatus] = useState("选择一个墓葬 CSV 文件，生成结果会在新标签页打开。");
+  const [status, setStatus] = useState("选择一个墓葬 CSV 文件。");
   const [runState, setRunState] = useState<RunState>("idle");
   const [stats, setStats] = useState<ModelStats | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
@@ -112,11 +50,6 @@ export default function ModellingPage() {
     event.preventDefault();
     if (!selectedFile || isGenerating) {
       return;
-    }
-
-    const resultTab = window.open("", "_blank", "noopener,noreferrer");
-    if (resultTab) {
-      writeLoadingTab(resultTab, selectedFile.name);
     }
 
     setIsGenerating(true);
@@ -153,22 +86,13 @@ export default function ModellingPage() {
         throw new Error("后端没有返回 url 或 html。");
       }
 
-      if (resultTab) {
-        resultTab.location.href = targetUrl;
-      } else {
-        window.open(targetUrl, "_blank", "noopener,noreferrer");
-      }
-
       setResultUrl(targetUrl);
       setStats(payload.stats ?? null);
       setRunState("done");
       const count = payload.stats?.total_tombs;
-      setStatus(count ? `已生成 ${count} 座墓葬模型，结果已在新标签页打开。` : "结果已在新标签页打开。");
+      setStatus(count ? `已生成 ${count} 座墓葬模型，显示在下方。` : "模型已生成，显示在下方。");
     } catch (error) {
       const message = error instanceof Error ? error.message : "生成失败。";
-      if (resultTab) {
-        writeErrorTab(resultTab, message);
-      }
       setRunState("error");
       setStats(null);
       setStatus(message);
@@ -187,7 +111,7 @@ export default function ModellingPage() {
     <>
       <Head>
         <title>墓葬3D建模</title>
-        <meta name="description" content="上传墓葬 CSV，生成并在新标签页打开 Three.js 3D 模型。" />
+        <meta name="description" content="上传墓葬 CSV，生成可以旋转查看的墓葬三维模型。" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -202,7 +126,7 @@ export default function ModellingPage() {
                   <div>
                     <h2 className="font-serif text-xl font-medium">生成模型</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      上传墓葬 CSV 后，生成结果会在新标签页打开。
+                      上传墓葬 CSV 后，模型会显示在下方。
                     </p>
                   </div>
                 </div>
@@ -220,7 +144,7 @@ export default function ModellingPage() {
                   <div className="actions">
                     <button type="submit" disabled={!selectedFile || isGenerating}>
                       {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
-                      {isGenerating ? "生成中..." : "生成并打开新标签页"}
+                      {isGenerating ? "生成中..." : "生成模型"}
                     </button>
                     <a href={demoModelUrl} target="_blank" rel="noreferrer">
                       <Box className="h-4 w-4" />
@@ -235,7 +159,7 @@ export default function ModellingPage() {
                   <div>
                     <h2 className="font-serif text-xl font-medium">状态</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      生成完成后可以重新打开最近一次模型。
+                      生成完成后，模型显示在下方，也可以在新标签页打开。
                     </p>
                   </div>
                 </div>
@@ -279,13 +203,22 @@ export default function ModellingPage() {
                   {resultUrl ? (
                     <a className="result-link" href={resultUrl} target="_blank" rel="noreferrer">
                       <Box className="h-4 w-4" />
-                      重新打开最近生成的模型
+                      在新标签页打开模型
                     </a>
                   ) : null}
                 </div>
               </section>
             </div>
           </section>
+
+          {resultUrl ? (
+            <ResultViewer
+              title="三维模型"
+              items={[{ key: "model", label: "最近生成的模型", url: resultUrl }]}
+              activeKey="model"
+              onSelect={() => undefined}
+            />
+          ) : null}
         </main>
       </div>
     </>
