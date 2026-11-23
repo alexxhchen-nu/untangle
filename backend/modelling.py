@@ -909,34 +909,83 @@ function showTomb(index) {
   fitCamera();
 }
 
-function fitSingleCamera(tomb) {
-  const { length, width, depth, scale } = dimsFor(tomb);
-  const maxDim = Math.max(length * scale, width * scale, depth * scale, 3);
-  camera.position.set(maxDim * 1.45, maxDim * 0.85, maxDim * 1.45);
-  controls.target.set(0, Math.max(0.7, depth * scale * 0.35), 0);
+function visibleBox(root) {
+  // Box3.setFromObject also counts hidden label sprites, which pushes the camera too far out.
+  // Also keep each mesh's own corners: fitting those is much tighter than fitting the corners
+  // of one big axis-aligned box when tombs are spread across a site and viewed at an angle.
+  const box = new THREE.Box3();
+  const points = [];
+  root.updateWorldMatrix(true, true);
+  root.traverseVisible((obj) => {
+    if (!obj.isMesh || obj.isSprite || obj.userData.isLabel) return;
+    const b = new THREE.Box3().setFromObject(obj, true);
+    if (b.isEmpty()) return;
+    box.union(b);
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) points.push(new THREE.Vector3(x, y, z));
+  });
+  box.userData = { points };
+  return box;
+}
+
+function frameBox(box, dir, minRadius=1.5) {
+  // Tight fit: place the camera along `dir` at the smallest distance where all 8 box corners
+  // fit inside the real horizontal and vertical field of view (with a small margin).
+  const center = box.getCenter(new THREE.Vector3());
+  const forward = dir.clone().normalize();               // from target towards camera
+  const worldUp = Math.abs(forward.y) > 0.99 ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(worldUp, forward).normalize();
+  const up = new THREE.Vector3().crossVectors(forward, right).normalize();
+  // The toolbar floats over the top of the canvas: fit into the area below it.
+  const canvasH = Math.max(container.getBoundingClientRect().height, 1);
+  const bar = document.querySelector('.toolbar');
+  const inset = bar ? Math.min(bar.getBoundingClientRect().bottom - container.getBoundingClientRect().top + 8, canvasH * 0.4) : 0;
+  const usable = Math.max(canvasH - Math.max(inset, 0), canvasH * 0.6);
+  const tanFull = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+  const tanV = tanFull * (usable / canvasH);
+  const tanH = tanFull * camera.aspect;
+  const margin = 1.12;
+  let distance = minRadius / Math.min(tanV, tanH);
+  const corners = (box.userData && box.userData.points && box.userData.points.length) ? box.userData.points : [];
+  if (!corners.length) {
+    for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) corners.push(new THREE.Vector3(x, y, z));
+  }
+  for (const corner of corners) {
+    const v = corner.clone().sub(center);
+    const depth = v.dot(forward);                          // positive = closer to camera
+    distance = Math.max(distance,
+      depth + (Math.abs(v.dot(right)) * margin) / tanH,
+      depth + (Math.abs(v.dot(up)) * margin) / tanV);
+  }
+  // Shift the view so the content is centred in the area under the toolbar.
+  const shift = ((canvasH - usable) / 2) * (2 * distance * tanFull / canvasH);
+  const target = center.clone().addScaledVector(up, shift);
+  controls.target.copy(target);
+  camera.position.copy(target).addScaledVector(forward, distance);
+  camera.near = Math.max(0.05, distance / 200);
+  camera.far = Math.max(500, distance * 20);
+  camera.updateProjectionMatrix();
   controls.update();
 }
 
+function fitSingleCamera(tomb) {
+  const box = visibleBox(tombGroup);
+  if (box.isEmpty()) {
+    const { length, width, depth, scale } = dimsFor(tomb);
+    box.setFromCenterAndSize(new THREE.Vector3(0, 0, 0), new THREE.Vector3(length * scale, depth * scale, width * scale));
+  }
+  frameBox(box, new THREE.Vector3(1.2, 0.85, 1.2));
+}
+
 function fitSceneCamera(topDown=false) {
-  const box = new THREE.Box3().setFromObject(tombGroup);
+  const box = visibleBox(tombGroup);
   if (box.isEmpty()) {
     camera.position.set(16, 12, 16);
     controls.target.set(0, 0, 0);
     controls.update();
     return;
   }
-  const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  box.getSize(size);
-  box.getCenter(center);
-  const maxDim = Math.max(size.x, size.z, 8);
-  if (topDown) {
-    camera.position.set(center.x, Math.max(18, maxDim * 1.35), center.z + 0.01);
-  } else {
-    camera.position.set(center.x + maxDim * 0.78, Math.max(12, maxDim * 0.58), center.z + maxDim * 0.86);
-  }
-  controls.target.set(center.x, Math.max(0.8, center.y * 0.45), center.z);
-  controls.update();
+  // Top-down keeps a hair of z so OrbitControls has a defined up direction.
+  frameBox(box, topDown ? new THREE.Vector3(0, 1, 0.001) : new THREE.Vector3(0.9, 0.75, 1.0), 2);
 }
 
 function fitCamera() {
@@ -1241,8 +1290,8 @@ document.getElementById('stat-total').textContent = tombs.length;
 document.getElementById('stat-shapes').textContent = new Set(tombs.map((t) => t.墓葬形制 || t.name || '')).size;
 renderEraFilters();
 renderList();
-if (tombs.length) showTomb(0);
 resize();
+if (tombs.length) showTomb(0);
 window.addEventListener('resize', resize);
 animate();
 </script>
