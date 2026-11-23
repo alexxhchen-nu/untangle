@@ -3,7 +3,9 @@ import path from "node:path"
 import Head from "next/head"
 import type { GetStaticProps, InferGetStaticPropsType } from "next"
 import { useMemo, useState } from "react"
+import { StateNotice } from "@/components/state-notice"
 import { ToolHero } from "@/components/tool-hero"
+import { ChevronRight } from "@/lib/icons"
 import { getTool } from "@/lib/tools"
 
 type SeriesId = "all" | "nsbd" | "hebei"
@@ -193,77 +195,88 @@ export default function LibraryPage({
                   </div>
                 </div>
 
-                <div className="book-list">
-              {visibleBooks.length === 0 ? (
-                <p className="empty-state">没有匹配结果，换一个地名、时代或遗址关键词试试。</p>
-              ) : (
-                visibleBooks.map((book) => {
-                  const isExpanded = expandedBookIds.has(book.id)
-                  const pdfUrl = buildAssetUrl(catalogue.baseUrls.pdf, book.filename)
-                  const markdownUrl = buildAssetUrl(
-                    catalogue.baseUrls.markdown,
-                    book.markdownFilename,
-                  )
-                  const csvUrl = buildAssetUrl(catalogue.baseUrls.csv, book.csvFilename)
-
-                  return (
-                    <article
-                      key={book.id}
-                      className={`book-row ${isExpanded ? "is-expanded" : ""}`}
-                      data-series={book.series}
+                <div className="lib-list">
+                  {visibleBooks.length === 0 ? (
+                    <StateNotice
+                      kind="empty"
+                      title="没有匹配的报告"
+                      action={
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => {
+                            setQuery("")
+                            setActiveSeries("all")
+                          }}
+                        >
+                          清除筛选
+                        </button>
+                      }
                     >
-                      <button
-                        type="button"
-                        className={`book-card ${isExpanded ? "is-selected" : ""}`}
-                        onClick={() => toggleBook(book.id)}
-                        aria-expanded={isExpanded}
-                      >
-                        <div className="grid gap-2">
-                          <strong>{book.title}</strong>
-                          <div className="book-meta">
-                            {catalogue.seriesMeta[book.series].label} · {book.tags.join(" / ")}
-                          </div>
-                        </div>
-                        <div className="book-meta">{book.description}</div>
-                      </button>
+                      换一个地名、时代或遗址关键词试试。
+                    </StateNotice>
+                  ) : (
+                    visibleBooks.map((book) => {
+                      const isExpanded = expandedBookIds.has(book.id)
+                      const files = [
+                        { label: "原始 PDF", url: buildAssetUrl(catalogue.baseUrls.pdf, book.filename) },
+                        { label: "Markdown", url: buildAssetUrl(catalogue.baseUrls.markdown, book.markdownFilename) },
+                        { label: "CSV", url: buildAssetUrl(catalogue.baseUrls.csv, book.csvFilename) },
+                      ]
 
-                      {isExpanded ? (
-                        <>
-                          <div className="book-node" aria-hidden="true" />
+                      return (
+                        <article
+                          key={book.id}
+                          className={`lib-card${isExpanded ? " is-open" : ""}`}
+                          data-series={book.series}
+                        >
+                          <button
+                            type="button"
+                            className="lib-card-head"
+                            onClick={() => toggleBook(book.id)}
+                            aria-expanded={isExpanded}
+                          >
+                            <span className="lib-card-series">
+                              <span className="lib-dot" aria-hidden="true" />
+                              {catalogue.seriesMeta[book.series].label}
+                            </span>
+                            <strong className="lib-card-title">{book.title}</strong>
+                            <span className="lib-card-desc">{book.description}</span>
+                            <span className="lib-tags">
+                              {book.tags.map((tag) => (
+                                <span key={tag} className="lib-tag">
+                                  {tag}
+                                </span>
+                              ))}
+                            </span>
+                            <ChevronRight className="lib-card-chevron h-4 w-4" aria-hidden="true" />
+                          </button>
 
-                          <div className="book-actions" aria-label={`${book.title} 文件下载`}>
-                            <a
-                              className={`action-link${pdfUrl ? "" : " is-disabled"}`}
-                              href={pdfUrl ?? undefined}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              原始 PDF
-                            </a>
-                            <div className="action-divider" />
-                            <a
-                              className={`action-link${markdownUrl ? "" : " is-disabled"}`}
-                              href={markdownUrl ?? undefined}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Markdown
-                            </a>
-                            <a
-                              className={`action-link${csvUrl ? "" : " is-disabled"}`}
-                              href={csvUrl ?? undefined}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              CSV
-                            </a>
-                          </div>
-                        </>
-                      ) : null}
-                    </article>
-                  )
-                })
-              )}
+                          {isExpanded ? (
+                            <div className="lib-card-files" aria-label={`${book.title} 文件`}>
+                              {files.map((file) =>
+                                file.url ? (
+                                  <a
+                                    key={file.label}
+                                    className="btn btn-sm btn-secondary"
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {file.label}
+                                  </a>
+                                ) : (
+                                  <span key={file.label} className="btn btn-sm btn-secondary is-disabled" aria-disabled="true">
+                                    {file.label}
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          ) : null}
+                        </article>
+                      )
+                    })
+                  )}
                 </div>
               </section>
             </div>

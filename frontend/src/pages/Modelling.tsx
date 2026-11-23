@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
 import { Box, FileUp, Loader2 } from "@/lib/icons";
@@ -241,12 +242,22 @@ export default function ModellingPage() {
 
                 <div className={`model-status-panel model-status-panel--${runState}`}>
                   {runState === "idle" ? (
-                    <div className="tool-empty-state compact-empty-state">
-                      <p>生成后会显示墓葬数量、形制数量、器物记录，并保留最近模型入口。</p>
-                    </div>
+                    <StateNotice kind="empty" title="还没有生成模型" compact>
+                      生成后会显示墓葬数量、形制数量、器物记录，并保留最近模型入口。
+                    </StateNotice>
                   ) : null}
 
-                  <p className="status">{status}</p>
+                  {runState === "error" ? (
+                    <StateNotice kind="error" title="生成没有成功" compact>
+                      {status}
+                    </StateNotice>
+                  ) : runState === "loading" ? (
+                    <StateNotice kind="loading" title="正在生成" compact>
+                      {status}
+                    </StateNotice>
+                  ) : (
+                    <p className="status">{status}</p>
+                  )}
 
                   {stats ? (
                     <dl className="stats-grid model-stats-grid">

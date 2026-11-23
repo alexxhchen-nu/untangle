@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, Fragment, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
 import { Download, Loader2, Send } from "@/lib/icons";
@@ -350,20 +351,21 @@ export default function DynamicParserPage() {
 
                 <div className="parser-result-body">
                   {state === "idle" ? (
-                    <div className="tool-empty-state">
-                      <p>运行后会显示墓葬表格，并和左侧原文逐段对照。</p>
-                    </div>
+                    <StateNotice kind="empty" title="还没有抽取结果">
+                      在左边粘贴墓葬段落，点「抽取墓葬信息」。结果会显示成墓葬表，并和原文逐段对照。
+                    </StateNotice>
                   ) : null}
 
                   {state === "loading" ? (
-                    <div className="tool-empty-state">
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      <p className="mt-3">正在等待后端返回结构化结果...</p>
-                    </div>
+                    <StateNotice kind="loading" title="正在抽取">
+                      后端正在按墓葬编号切分原文、抽取字段，通常几秒钟内完成。
+                    </StateNotice>
                   ) : null}
 
                   {state === "error" && error ? (
-                    <div className="parser-error" role="alert">{error}</div>
+                    <StateNotice kind="error" title="抽取没有成功">
+                      {error}。确认后端在运行（127.0.0.1:8000），然后再试一次。
+                    </StateNotice>
                   ) : null}
 
                   {state === "done" && result ? (
@@ -438,7 +440,9 @@ export default function DynamicParserPage() {
                           </table>
                         </div>
                       ) : (
-                        <div className="parser-empty-result">后端返回成功，但没有识别到墓葬记录。</div>
+                        <StateNotice kind="empty" title="没有识别到墓葬">
+                          原文里要有「## M1」这样的墓葬编号标题，或「M1位于……」这样的描述句。
+                        </StateNotice>
                       )}
 
                       {selectedTomb ? (
