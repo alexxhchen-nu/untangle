@@ -21,15 +21,18 @@ Extract tomb records from Chinese archaeological reports, check them against the
 
 <p align="center">
   <a href="#screens">Screens</a> ·
+  <a href="#promo">Promo</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#workflow">Workflow</a> ·
   <a href="#tools">Tools</a> ·
   <a href="#layout">Layout</a> ·
-  <a href="#status">Status</a>
+  <a href="#status">Status</a> ·
+  <a href="#built-with">Built With</a> ·
+  <a href="#acknowledgements">Acknowledgements</a>
 </p>
 
 <a id="screens"></a>
-## Screens · 界面
+## 🖼️ Screens · 界面
 
 <table>
   <tr>
@@ -40,8 +43,16 @@ Extract tomb records from Chinese archaeological reports, check them against the
   </tr>
 </table>
 
+<a id="promo"></a>
+## 🎬 Promo · 宣传片
+
+<p align="center">
+  <a href="./assets/promo/untangle-promo.mp4"><img src="./assets/promo/poster.jpg" width="80%" alt="Untangle 宣传片封面 / promo poster — 点击播放 / click to play"></a>
+</p>
+<p align="center"><sub>28 秒 · 1080p · 点图播放 / click to play — 报告 → 墓葬表 → 对照原文 → 三维 · reports → tomb table → source check → 3D</sub></p>
+
 <a id="quick-start"></a>
-## Quick Start · 快速上手
+## 🚀 Quick Start · 快速上手
 
 需要 / Requires: Python 3.12（见 `mise.toml`）、[uv](https://docs.astral.sh/uv/)、[pnpm](https://pnpm.io/)。
 
@@ -87,7 +98,7 @@ uv run python -m unittest shared/tests/test_dynamic_parser.py
 ```
 
 <a id="workflow"></a>
-## How it fits together · 工作流
+## 🧭 How it fits together · 工作流
 
 ```mermaid
 graph LR
@@ -109,7 +120,7 @@ graph LR
 | `POST /gis/generate` | 上传含遗址与坐标的 CSV，返回遗址地图 HTML（可选总览图） |
 
 <a id="tools"></a>
-## Tools · 四个工具
+## 🧰 Tools · 四个工具
 
 | 工具 | 页面 | 现在能做的 |
 |---|---|---|
@@ -119,7 +130,7 @@ graph LR
 | 墓葬三维建模 | `/Modelling` | 上传 CSV 生成墓葬三维模型，结果直接显示在页面里，可导出 GLB |
 
 <a id="layout"></a>
-## Repository layout · 仓库结构
+## 🗂️ Repository layout · 仓库结构
 
 根目录是工具箱应用；其他考古相关仓库于 2026 年 11 月用 `git subtree` 并入，保留了完整历史。
 
@@ -150,18 +161,40 @@ graph LR
 </details>
 
 <a id="status"></a>
-## Status · 当前状态
+## 🚧 Status · 当前状态
 
 - 抽取器目前会漏掉部分墓向和年代（例如「墓向南北向」「墓向185°」），字段核对卡会把它们标成「未抽取」。
 - GIS 地图底图和三维场景从 CDN 加载 Leaflet 和 Three.js，离线时不显示。
 - 仓库还没有 LICENSE 文件。
 
-## Credits · 致谢
+<a id="built-with"></a>
+## 🏗️ Built With · 技术栈
 
-- 头图金字塔字符画来自 [textart.sh](https://textart.sh/topic/pyramid)。
-- 手绘高亮：[Rough Notation](https://roughnotation.com)（MIT）。
-- 字体：[Instrument Sans](https://fontsource.org/fonts/instrument-sans)、思源黑体 / 宋体（Noto Sans SC / Noto Serif SC）、朱雀仿宋。
+| 层 · Layer | 技术 · Tech | 版本 · Version | 用途 · Used for |
+|---|---|---|---|
+| 前端 · Frontend | [Next.js](https://nextjs.org) · [React](https://react.dev) · [TypeScript](https://www.typescriptlang.org) | 16 · 19 · 6 | 页面与交互 · pages and UI |
+| 样式 · Styling | [Tailwind CSS](https://tailwindcss.com) | 4 | 设计 token 与布局 · tokens and layout |
+| 后端 · Backend | [FastAPI](https://fastapi.tiangolo.com) · [Uvicorn](https://www.uvicorn.org) · Python | ≥0.139 · ≥0.50 · 3.10–3.12 | 抽取、地图、三维接口 · parse / GIS / 3D APIs |
+| 三维 · 3D | [Three.js](https://threejs.org) | 0.164.1 | 墓葬模型 · tomb models |
+| 地图 · Maps | [Leaflet](https://leafletjs.com) | 1.9.4 | 遗址地图 · site maps |
+| 高亮 · Highlights | [Rough Notation](https://roughnotation.com) | 0.5.1 | 手绘标注 · hand-drawn marks |
 
-## License
+<a id="acknowledgements"></a>
+## 🙏 Acknowledgements · 致谢
+
+| 资源 · Resource | 作者 · Author | 许可 · License | 用在哪 · Used for |
+|---|---|---|---|
+| 🎞️ [video-shotcraft](https://github.com/Vincentwei1021/video-shotcraft) | Vincent Wei · [@VincentWei93](https://x.com/VincentWei93) | Apache-2.0 | 宣传片的镜头配方与流程 · promo shot recipes and workflow |
+| 🧩 [Remotion agent skills](https://github.com/remotion-dev/skills) | Remotion | — | 宣传片的 Remotion 写法参考 · Remotion know-how for the promo |
+| 🎥 [Remotion](https://www.remotion.dev) | Remotion | [Remotion License](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md)（个人与小团队免费 · free for individuals and small teams） | 渲染宣传片 · rendering the promo |
+| 🎵 “Cat Walk” | Arulo · [Mixkit](https://mixkit.co) | Mixkit Stock Music Free License | 宣传片配乐 · promo music |
+| 🔺 [textart.sh](https://textart.sh/topic/pyramid) | textart.sh | — | 头图金字塔字符画 · ASCII pyramid in the header |
+| 🔤 [Instrument Sans](https://fontsource.org/fonts/instrument-sans) · Noto Sans SC / Noto Serif SC · 朱雀仿宋 | 各字体作者 · font authors | SIL OFL 1.1 | 界面与宣传片字体 · UI and promo type |
+| 📝 [readme-orchestrator](https://github.com/alexxhchen-nu/readme-orchestrator) | Alex Chen | — | 整理和检查这份 README · structuring and auditing this README |
+
+> 宣传片里的音效是用 ffmpeg 合成的占位音，报告标题来自已出版的考古报告系列。
+> The promo's sound effects are ffmpeg-synthesized placeholders; report titles come from published excavation report series.
+
+## 📄 License · 许可证
 
 尚未选择开源许可证。旧版说明保留在 [`README.old.md`](./README.old.md)。
