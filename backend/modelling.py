@@ -359,31 +359,34 @@ def render_tomb_model_html(
 <style>
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; overflow:hidden; }
+:root { color-scheme: light; }
 body {
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-  color:#e8e4da; background:#141417;
+  font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  color:#09090b; background:#ffffff;
 }
 button, input { font:inherit; }
 .shell { display:grid; grid-template-columns:340px minmax(0,1fr); height:100vh; min-height:0; }
 .sidebar {
-  min-width:0; background:#1f211e; border-right:1px solid rgba(255,255,255,.12);
+  min-width:0; background:#ffffff; border-right:1px solid #e4e4e7;
   display:flex; flex-direction:column; height:100vh; min-height:0; overflow:hidden;
 }
-.sidebar header { flex:0 0 auto; padding:16px 18px 14px; border-bottom:1px solid rgba(255,255,255,.1); }
-.eyebrow { margin:0 0 4px; color:#aaa28f; font-size:12px; }
-h1 { margin:0; font-size:20px; line-height:1.25; font-weight:650; letter-spacing:0; }
-.stats { flex:0 0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 18px; border-bottom:1px solid rgba(255,255,255,.1); }
-.stat { background:#292a26; border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:8px; }
-.stat strong { display:block; font-size:18px; color:#fff; }
-.stat span { color:#aaa28f; font-size:11px; }
-.controls { flex:0 0 auto; padding:12px 18px; display:grid; gap:10px; border-bottom:1px solid rgba(255,255,255,.1); }
-.search { width:100%; border:1px solid rgba(255,255,255,.16); border-radius:6px; background:#151612; color:#fff; padding:9px 10px; outline:none; }
-.filter-row { display:flex; gap:8px; flex-wrap:wrap; }
+.sidebar header { flex:0 0 auto; padding:16px 18px 14px; border-bottom:1px solid #e4e4e7; }
+.eyebrow { margin:0 0 4px; color:#71717a; font-size:13px; }
+h1 { margin:0; font-size:20px; line-height:1.25; font-weight:600; letter-spacing:0; }
+.stats { flex:0 0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 18px; border-bottom:1px solid #e4e4e7; }
+.stat { background:#ffffff; border:1px solid #e4e4e7; border-radius:6px; padding:8px 10px; }
+.stat strong { display:block; font-size:20px; color:#09090b; font-variant-numeric:tabular-nums; }
+.stat span { color:#71717a; font-size:12px; }
+.controls { flex:0 0 auto; padding:12px 18px; display:grid; gap:10px; border-bottom:1px solid #e4e4e7; }
+.search { width:100%; border:1px solid #d4d4d8; border-radius:4px; background:#ffffff; color:#09090b; padding:9px 10px; outline:none; }
+.search:focus { border-color:#09090b; }
+.filter-row { display:flex; gap:6px; flex-wrap:wrap; }
 .chip {
-  border:1px solid rgba(255,255,255,.14); color:#ddd4c2; background:#282923;
-  border-radius:6px; padding:6px 9px; cursor:pointer;
+  border:1px solid #d4d4d8; color:#09090b; background:#ffffff;
+  border-radius:4px; padding:6px 10px; cursor:pointer; font-size:13px;
 }
-.chip.is-active { background:#d6a84f; border-color:#d6a84f; color:#17130b; }
+.chip:hover { border-color:#09090b; }
+.chip.is-active { background:#09090b; border-color:#09090b; color:#ffffff; }
 .tomb-list {
   flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; padding:10px;
   overscroll-behavior:contain; scrollbar-gutter:stable; -webkit-overflow-scrolling:touch;
@@ -392,38 +395,39 @@ h1 { margin:0; font-size:20px; line-height:1.25; font-weight:650; letter-spacing
   width:100%; text-align:left; color:inherit; cursor:pointer; border:1px solid transparent;
   background:transparent; border-radius:6px; padding:10px; display:grid; gap:5px;
 }
-.tomb-item:hover { background:rgba(255,255,255,.06); }
-.tomb-item.is-active { background:rgba(214,168,79,.13); border-color:rgba(214,168,79,.45); }
-.tomb-title { color:#fff; font-weight:650; line-height:1.35; }
-.tomb-meta { color:#aaa28f; font-size:12px; line-height:1.45; }
-.badge { display:inline-block; width:max-content; border-radius:4px; padding:2px 6px; color:#fff; font-size:11px; }
-.viewer { position:relative; min-width:0; height:100vh; background:#121316; }
+.tomb-item:hover { background:#f4f4f5; }
+.tomb-item.is-active { background:#fef2f2; border-color:#fecaca; }
+.tomb-title { color:#09090b; font-weight:600; line-height:1.35; }
+.tomb-meta { color:#71717a; font-size:13px; line-height:1.45; }
+.badge { display:inline-block; width:max-content; border-radius:4px; padding:2px 6px; color:#fff; font-size:12px; }
+.viewer { position:relative; min-width:0; height:100vh; background:#f7f7f8; }
 #canvas-container { position:absolute; inset:0 0 190px 0; }
 .toolbar {
-  position:absolute; top:12px; left:12px; right:12px; display:flex; gap:8px; z-index:4; flex-wrap:wrap;
+  position:absolute; top:12px; left:12px; right:12px; display:flex; gap:6px; z-index:4; flex-wrap:wrap;
 }
 .tool {
-  border:1px solid rgba(255,255,255,.16); background:rgba(31,33,30,.86); color:#eee;
-  border-radius:6px; padding:8px 10px; cursor:pointer; backdrop-filter:blur(8px);
+  border:1px solid #d4d4d8; background:rgba(255,255,255,.92); color:#09090b;
+  border-radius:4px; padding:7px 10px; cursor:pointer; font-size:13px;
 }
-.tool.is-active { background:#d6a84f; color:#17130b; border-color:#d6a84f; }
+.tool:hover { border-color:#09090b; }
+.tool.is-active { background:#dc2626; color:#ffffff; border-color:#dc2626; }
 .info-panel {
   position:absolute; left:0; right:0; bottom:0; min-height:190px; max-height:190px; overflow:auto;
-  background:#1b1c19; border-top:1px solid rgba(255,255,255,.12); padding:16px 20px;
+  background:#ffffff; border-top:1px solid #e4e4e7; padding:16px 20px;
   display:grid; grid-template-columns:minmax(240px,380px) minmax(0,1fr); gap:20px;
 }
 .info-panel h2 { margin:0 0 6px; font-size:18px; line-height:1.3; letter-spacing:0; }
-.muted { color:#aaa28f; }
-.dim-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-.dim { min-width:74px; background:#272822; border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:8px; }
-.dim strong { display:block; font-size:17px; color:#f4d58b; }
-.dim span { color:#aaa28f; font-size:11px; }
-.desc { margin:0; color:#d9d0bf; line-height:1.6; font-size:13px; }
-.artifact-line { margin-top:8px; color:#aaa28f; font-size:12px; line-height:1.5; }
-.empty { padding:24px; color:#aaa28f; }
+.muted { color:#71717a; }
+.dim-grid { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.dim { min-width:74px; background:#ffffff; border:1px solid #e4e4e7; border-radius:6px; padding:8px 10px; }
+.dim strong { display:block; font-size:18px; color:#09090b; font-variant-numeric:tabular-nums; }
+.dim span { color:#71717a; font-size:12px; }
+.desc { margin:0; color:#3f3f46; line-height:1.65; font-size:14px; }
+.artifact-line { margin-top:8px; color:#71717a; font-size:13px; line-height:1.5; }
+.empty { padding:24px; color:#71717a; }
 @media (max-width: 780px) {
   .shell { grid-template-columns:1fr; grid-template-rows:280px minmax(0,1fr); }
-  .sidebar { height:280px; border-right:0; border-bottom:1px solid rgba(255,255,255,.12); }
+  .sidebar { height:280px; border-right:0; border-bottom:1px solid #e4e4e7; }
   .info-panel { grid-template-columns:1fr; max-height:220px; }
   #canvas-container { bottom:220px; }
 }
@@ -477,8 +481,8 @@ const ERA_COLORS = __COLORS_JSON__;
 
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x121316);
-scene.fog = new THREE.Fog(0x121316, 45, 160);
+scene.background = new THREE.Color(0xf7f7f8);
+scene.fog = new THREE.Fog(0xf7f7f8, 60, 180);
 
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 500);
 const renderer = new THREE.WebGLRenderer({ antialias:true });
@@ -491,20 +495,20 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.maxPolarAngle = Math.PI * 0.88;
 
-scene.add(new THREE.AmbientLight(0x56504a, 0.9));
-const keyLight = new THREE.DirectionalLight(0xffe5bd, 1.25);
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
 keyLight.position.set(18, 24, 14);
 keyLight.castShadow = true;
 scene.add(keyLight);
-const fillLight = new THREE.DirectionalLight(0x8ca6ff, 0.35);
+const fillLight = new THREE.DirectionalLight(0xdbe4ff, 0.35);
 fillLight.position.set(-16, 9, -14);
 scene.add(fillLight);
 
-const grid = new THREE.GridHelper(80, 40, 0x555144, 0x2d2e2a);
+const grid = new THREE.GridHelper(80, 40, 0xd4d4d8, 0xe4e4e7);
 scene.add(grid);
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(80, 80),
-  new THREE.MeshStandardMaterial({ color:0x181a17, roughness:1 })
+  new THREE.MeshStandardMaterial({ color:0xf4f4f5, roughness:1 })
 );
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -0.02;
@@ -525,7 +529,7 @@ const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const selectionRing = new THREE.Mesh(
   new THREE.RingGeometry(1.15, 1.35, 48),
-  new THREE.MeshBasicMaterial({ color:0xf4d58b, transparent:true, opacity:0.9, side:THREE.DoubleSide })
+  new THREE.MeshBasicMaterial({ color:0xdc2626, transparent:true, opacity:0.9, side:THREE.DoubleSide })
 );
 selectionRing.rotation.x = -Math.PI / 2;
 selectionRing.position.y = 0.035;
@@ -618,14 +622,14 @@ function addMesh(mesh, x=0, y=0, z=0) {
   return mesh;
 }
 
-function addLabel(text, position, color=0xffffff) {
+function addLabel(text, position, color=0x09090b) {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 112;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = 'rgba(15,16,15,0.78)';
+  ctx.fillStyle = 'rgba(255,255,255,0.94)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.strokeStyle = 'rgba(9,9,11,0.18)';
   ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
   ctx.fillStyle = hexColor(color);
   ctx.font = '600 32px "PingFang SC", sans-serif';
@@ -659,7 +663,7 @@ function addRoomBox(label, x, z, w, d, h, color, opacity=0.48) {
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(wallT, h, d), wallMat(color, opacity)), x - w / 2, h / 2, z);
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(wallT, h, d), wallMat(color, opacity)), x + w / 2, h / 2, z);
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(w * 0.48, 0.18, d * 0.32), floorMat(0x5a4a3a)), x, 0.2, z);
-  addLabel(label, new THREE.Vector3(x, h + 0.75, z), 0xaaa28f);
+  addLabel(label, new THREE.Vector3(x, h + 0.75, z), 0x52525b);
 }
 
 function addVesselCluster(tomb, centerX, centerZ, color=0x8b7355) {
@@ -726,7 +730,7 @@ function buildMultiChamber(tomb) {
 
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(L + passageLen, 0.08, W * 1.08), floorMat(0x34291f)), -passageLen * 0.18, 0.04, 0);
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(passageLen, roomH * 0.58, W * 0.32), wallMat(color, 0.28)), -L / 2 - passageLen / 2, roomH * 0.29, 0);
-  addLabel('墓道', new THREE.Vector3(-L / 2 - passageLen / 2, roomH + 0.45, 0), 0xaaa28f);
+  addLabel('墓道', new THREE.Vector3(-L / 2 - passageLen / 2, roomH + 0.45, 0), 0x52525b);
 
   addRoomBox('前室', frontX, 0, chamberLen * 0.92, chamberW, roomH, color, 0.52);
   addRoomBox('中室', midX, 0, chamberLen * 0.86, chamberW, roomH, color, 0.52);
@@ -740,7 +744,7 @@ function buildMultiChamber(tomb) {
 
   if (/龛|壁龛/.test(`${tomb.墓葬形制 || ''}${tomb.备注 || ''}`)) {
     addMesh(new THREE.Mesh(new THREE.BoxGeometry(chamberLen * 0.28, roomH * 0.52, W * 0.18), solidMat(0x3a2a1a)), rearX + chamberLen * 0.38, roomH * 0.28, 0);
-    addLabel('壁龛', new THREE.Vector3(rearX + chamberLen * 0.38, roomH * 0.9, 0), 0xaaa28f);
+    addLabel('壁龛', new THREE.Vector3(rearX + chamberLen * 0.38, roomH * 0.9, 0), 0x52525b);
   }
 
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(L, 0.16, W * 0.78), roofMat(color, 0.3)), 0, roomH + 0.08, 0);
@@ -767,7 +771,7 @@ function buildFrontRearChamber(tomb) {
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(passLen, roomH * 0.52, roomD * 0.32), wallMat(color, 0.28)), frontX - frontW / 2 - passLen / 2, roomH * 0.26, 0);
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(frontW + rearW + gap, 0.14, roomD), roofMat(color, 0.32)), gap / 2, roomH + 0.07, 0);
   addVesselCluster(tomb, rearX, -roomD * 0.2, 0x8b7355);
-  addLabel('墓道', new THREE.Vector3(frontX - frontW / 2 - passLen / 2, roomH + 0.45, 0), 0xaaa28f);
+  addLabel('墓道', new THREE.Vector3(frontX - frontW / 2 - passLen / 2, roomH + 0.45, 0), 0x52525b);
   addLabel(tomb.墓葬形制 || '前后室墓', new THREE.Vector3(gap / 2, roomH + 1.35, 0), color);
 }
 
@@ -811,7 +815,7 @@ function buildWoodChamber(tomb) {
 
   const passLen = Math.max(3, L * 0.95);
   addMesh(new THREE.Mesh(new THREE.BoxGeometry(passLen, pitH * 0.48, W * 0.34), wallMat(color, 0.22)), -L / 2 - passLen / 2, pitH * 0.24, 0);
-  addLabel('墓道', new THREE.Vector3(-L / 2 - passLen / 2, pitH + 0.45, 0), 0xaaa28f);
+  addLabel('墓道', new THREE.Vector3(-L / 2 - passLen / 2, pitH + 0.45, 0), 0x52525b);
 
   if (/侧室|小侧室/.test(`${tomb.墓葬形制 || ''}${tomb.备注 || ''}`)) {
     const sideX = L / 2 + Math.max(0.8, L * 0.13);
@@ -820,7 +824,7 @@ function buildWoodChamber(tomb) {
   } else {
     addVesselCluster(tomb, 0, -cW * 0.25, 0x8b7355);
   }
-  addLabel('主椁室', new THREE.Vector3(0, cH + 0.75, 0), 0xaaa28f);
+  addLabel('主椁室', new THREE.Vector3(0, cH + 0.75, 0), 0x52525b);
   addLabel(tomb.墓葬形制 || '木椁墓', new THREE.Vector3(0, pitH + 1.15, 0), color);
 }
 
