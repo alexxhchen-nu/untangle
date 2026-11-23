@@ -19,8 +19,6 @@ export default function LandingPage() {
                 <Link
                   key={tool.slug}
                   href={tool.href}
-                  target="_blank"
-                  rel="noreferrer"
                   className="toolbox-list-item"
                 >
                   <span className="toolbox-list-media" data-index={tool.index}>

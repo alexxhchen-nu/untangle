@@ -1,8 +1,6 @@
 import { Box, Braces, MapPinned, Search } from "@/lib/icons"
 import type { IconComponent } from "@/lib/icons"
 
-export type ToolInputMode = 'file' | 'text' | 'json' | 'query'
-
 export interface ToolMeta {
   slug: string
   href: string
@@ -11,28 +9,20 @@ export interface ToolMeta {
   tagline: string
   description: string
   icon: IconComponent
-  endpoint: string
-  inputMode: ToolInputMode
-  acceptedTypes?: string
-  exampleInput: string
-  resultHint: string
   index: string
 }
 
+// Ordered along the main workflow: find a report → extract tombs → map / model them.
 export const TOOLS: ToolMeta[] = [
   {
     slug: 'library',
     href: '/Library',
     name: '资料库检索',
     en: '资料目录工作台',
-    tagline: '跨文献、遗址、墓葬与器物记录进行统一检索',
+    tagline: '按系列和关键词查找考古报告，在线打开 PDF',
     description:
-      '集中浏览已整理的考古文献目录，直接打开 PDF、Markdown 解析结果与 CSV 数据。这个入口保留原有目录功能，同时套入新的门户导航。',
+      '浏览已整理的考古报告目录。可以按系列筛选、按标题或标签搜索，直接打开 PDF、解析后的 Markdown 和 CSV。',
     icon: Search,
-    endpoint: '/library/search',
-    inputMode: 'query',
-    exampleInput: '战国 唐县 墓地',
-    resultHint: '目录页本身已经提供本地筛选；如接入后端，可返回命中记录、来源片段、筛选项和详情页链接。',
     index: '一',
   },
   {
@@ -40,46 +30,32 @@ export const TOOLS: ToolMeta[] = [
     href: '/DynamicParser',
     name: '墓葬文本抽取',
     en: '文本抽取工作台',
-    tagline: '从报告文本中抽取墓葬、器物与尺寸字段',
+    tagline: '从报告文本中抽出墓葬编号、年代、形制、尺寸和随葬器物',
     description:
-      '对应 backend/dynamic_parser.py 的结构化抽取能力。适合粘贴 Markdown、简报正文或墓葬段落，输出可继续建模或制表的 JSON/CSV 数据。',
+      '粘贴报告正文或墓葬段落，得到一张墓葬表，可以逐条对照原文核对，并下载 CSV 给三维建模或地图使用。',
     icon: Braces,
-    endpoint: '/dynamic-parser/parse',
-    inputMode: 'text',
-    exampleInput: 'M1，长方形竖穴土坑墓。墓口长3.4、宽1.8、深2.1米，随葬陶罐1件。',
-    resultHint: '建议返回墓葬编号、年代、形制、尺寸、墓向、随葬器物和 parser 置信说明。',
     index: '二',
-  },
-  {
-    slug: 'modelling',
-    href: '/Modelling',
-    name: '墓葬三维建模',
-    en: '三维建模工作台',
-    tagline: '输入墓葬形制与尺寸，生成可检查的三维模型',
-    description:
-      '为墓葬结构数据、CSV 或人工录入参数预留的建模入口。后端可以生成 Three.js 场景配置、GLB 文件、剖面图或校验报告。',
-    icon: Box,
-    endpoint: '/modelling/generate',
-    inputMode: 'file',
-    acceptedTypes: '.csv,text/csv',
-    exampleInput: '上传包含墓葬编号、墓葬形制、墓口长、墓口宽、墓深等列的 CSV 文件',
-    resultHint: '建议返回模型 URL、场景 JSON、尺寸校验、风险提示与预览截图。',
-    index: '三',
   },
   {
     slug: 'gis',
     href: '/GIS',
     name: '遗址空间分析',
     en: '空间分析工作台',
-    tagline: '把地名、坐标和遗址属性转成可探索地图',
+    tagline: '把带坐标的遗址和墓葬数据画成地图',
     description:
-      '为 GIS、地点消歧、路线和空间聚类分析预留的交互入口。适合接 GeoJSON、地图瓦片、行政区划和自定义空间分析服务。',
+      '上传含遗址、墓葬和坐标字段的 CSV，生成遗址分布地图，可以选坐标模式，也可以另外生成总览图。',
     icon: MapPinned,
-    endpoint: '/gis/generate',
-    inputMode: 'file',
-    acceptedTypes: '.csv,text/csv',
-    exampleInput: '上传包含遗址、墓葬、坐标或地点字段的 CSV 文件',
-    resultHint: '建议返回 GeoJSON、地点匹配置信度、地图视图范围和未匹配地名。',
+    index: '三',
+  },
+  {
+    slug: 'modelling',
+    href: '/Modelling',
+    name: '墓葬三维建模',
+    en: '三维建模工作台',
+    tagline: '按墓葬形制和尺寸生成三维模型',
+    description:
+      '上传含墓葬编号、形制、墓口长宽和墓深的 CSV，在浏览器里生成可以旋转查看的墓葬三维模型。',
+    icon: Box,
     index: '四',
   },
 ]
