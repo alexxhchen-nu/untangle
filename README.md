@@ -11,7 +11,8 @@
 从考古报告里抽取墓葬数据，逐条对照原文核对，再画成遗址地图和三维模型。
 Extract tomb records from Chinese archaeological reports, check them against the source, then map and model them.
 
-> 项目名 **Untangle**，仓库名保留为 `kaogu-tools`，已有的链接不受影响。
+> 🔗 这是 **Untangle** 的公开仓库。黑客松提交时用的是私有仓库 [`kaogu-tools`](https://github.com/alexxhchen-nu/kaogu-tools)，两者代码相同；公开前删掉了第三方书籍全文、报告图片等有版权的资料。
+> This is the public home of **Untangle**. The hackathon entry pointed to the private repo [`kaogu-tools`](https://github.com/alexxhchen-nu/kaogu-tools); the code is the same, with third-party book text and report images removed before going public.
 
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.12-DC2626?style=flat-square" alt="Python 3.12">
