@@ -10,7 +10,9 @@ export default function LandingPage() {
           <span className="home-mark" aria-hidden="true">
             考
           </span>
-          <h1>考古工具箱</h1>
+          <h1>
+            考古<span className="brush brush--title">工具箱</span>
+          </h1>
           <p>检索考古报告，抽取墓葬数据，再画成遗址地图和三维模型。</p>
         </header>
 

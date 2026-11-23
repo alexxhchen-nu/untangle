@@ -83,7 +83,7 @@ export function findMarks(passage: string, terms: { value: string; numeric?: boo
     .sort((a, b) => b.value.length - a.value.length);
 
   for (const term of sorted) {
-    const candidates = term.numeric ? numberVariants(term.value) : [term.value];
+    const candidates = (term.numeric ? numberVariants(term.value) : [term.value]).sort((a, b) => b.length - a.length);
     for (const candidate of candidates) {
       const pattern = term.numeric
         ? new RegExp(`(?<![0-9.])${escapeRegExp(candidate)}(?![0-9])`, "g")

@@ -428,12 +428,12 @@ export default function DynamicParserPage() {
                                     }
                                   }}
                                 >
-                                  <td>{formatValue(tomb["墓葬编号"])}</td>
-                                  <td>{formatValue(tomb["年代"])}</td>
-                                  <td>{formatValue(tomb["墓葬形制"])}</td>
-                                  <td>{formatValue(tomb["墓向"])}</td>
-                                  <td>{formatDimensions(tomb)}</td>
-                                  <td>{artifactSummary(tomb["随葬器物"])}</td>
+                                  <td data-label="编号">{formatValue(tomb["墓葬编号"])}</td>
+                                  <td data-label="年代">{formatValue(tomb["年代"])}</td>
+                                  <td data-label="形制">{formatValue(tomb["墓葬形制"])}</td>
+                                  <td data-label="墓向">{formatValue(tomb["墓向"])}</td>
+                                  <td data-label="尺寸">{formatDimensions(tomb)}</td>
+                                  <td data-label="随葬器物">{artifactSummary(tomb["随葬器物"])}</td>
                                 </tr>
                               ))}
                             </tbody>
