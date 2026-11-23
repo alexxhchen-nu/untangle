@@ -1865,3 +1865,224 @@
     align-self: auto;
   }
 }
+
+/* ============================================================
+   DynamicParser: source ↔ result linking
+   ============================================================ */
+.source-heading {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.source-edit-button,
+.source-cancel-button {
+  min-height: 2.25rem;
+  border: 1px solid rgba(35, 32, 26, 0.5);
+  background: transparent;
+  color: var(--ink);
+  padding: 0 0.9rem;
+  font-family: "Noto Sans SC", "Zhuque Fangsong", serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.source-edit-button:hover,
+.source-cancel-button:hover,
+.source-edit-button:focus-visible,
+.source-cancel-button:focus-visible {
+  border-color: var(--seal);
+  color: var(--seal);
+  outline: none;
+}
+
+.source-view {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+  gap: 0.35rem;
+  margin-top: clamp(1rem, 2vh, 1.4rem);
+  overflow: auto;
+  border: 1px solid rgba(35, 32, 26, 0.18);
+  background: rgba(255, 253, 248, 0.6);
+  padding: 0.75rem;
+  max-height: clamp(22rem, 56vh, 36rem);
+}
+
+.source-gap {
+  padding: 0.35rem 0.75rem;
+  color: rgba(35, 32, 26, 0.55);
+  font-size: 0.9rem;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+.source-segment {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: rgba(35, 32, 26, 0.72);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.source-segment:hover {
+  background: rgba(35, 32, 26, 0.04);
+}
+
+.source-segment:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: -2px;
+}
+
+.source-segment.is-active {
+  border-left-color: var(--seal);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.source-segment-tag {
+  padding-top: 0.2rem;
+  color: rgba(35, 32, 26, 0.5);
+  font-family: "Noto Sans SC", "Zhuque Fangsong", serif;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.source-segment.is-active .source-segment-tag {
+  color: var(--seal);
+}
+
+.source-segment-text {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+.source-segment mark {
+  background: transparent;
+  color: var(--seal);
+  box-shadow: inset 0 -0.45em 0 rgba(184, 68, 47, 0.14);
+  font-weight: 700;
+}
+
+.parser-table tbody tr {
+  cursor: pointer;
+}
+
+.parser-table tbody tr:hover td {
+  background: rgba(35, 32, 26, 0.035);
+}
+
+.parser-table tbody tr:focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: -2px;
+}
+
+.parser-table tbody tr.is-selected td {
+  background: var(--panel);
+}
+
+.parser-table tbody tr.is-selected td:first-child {
+  box-shadow: inset 3px 0 0 var(--seal);
+  color: var(--seal);
+  font-weight: 700;
+}
+
+.evidence-card {
+  border: 1px solid rgba(35, 32, 26, 0.16);
+  background: var(--panel);
+  padding: 1rem 1.1rem;
+}
+
+.evidence-card header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(35, 32, 26, 0.12);
+  padding-bottom: 0.7rem;
+}
+
+.evidence-card h3 {
+  margin: 0;
+  font-family: "Noto Sans SC", "Zhuque Fangsong", serif;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.evidence-flag,
+.evidence-ok {
+  font-size: 0.82rem;
+}
+
+.evidence-flag {
+  color: var(--seal);
+  font-weight: 700;
+}
+
+.evidence-ok {
+  color: rgba(35, 32, 26, 0.6);
+}
+
+.evidence-card ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evidence-card li {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 0.5rem;
+  border-bottom: 1px dashed rgba(35, 32, 26, 0.12);
+  padding: 0.6rem 0.25rem;
+}
+
+.evidence-card li span {
+  grid-row: 1 / span 2;
+  color: rgba(35, 32, 26, 0.6);
+  font-size: 0.82rem;
+}
+
+.evidence-card li strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.evidence-card li em {
+  color: rgba(35, 32, 26, 0.5);
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+.evidence-card li.is-missing strong,
+.evidence-card li.is-missing em {
+  color: var(--seal);
+}
+
+.evidence-empty,
+.evidence-artifacts {
+  margin: 0.75rem 0 0;
+  color: rgba(35, 32, 26, 0.7);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.evidence-card li.is-empty strong {
+  color: rgba(35, 32, 26, 0.35);
+}
+
+.evidence-card li.is-empty em {
+  color: rgba(35, 32, 26, 0.55);
+}
