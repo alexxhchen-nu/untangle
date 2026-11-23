@@ -48,9 +48,12 @@ Extract tomb records from Chinese archaeological reports, check them against the
 ## 🎬 Promo · 宣传片
 
 <p align="center">
-  <a href="./assets/promo/untangle-promo.mp4"><img src="./assets/promo/poster.jpg" width="80%" alt="Untangle 宣传片封面 / promo poster — 点击播放 / click to play"></a>
+  <a href="./assets/promo/untangle-promo.mp4"><img src="./assets/promo/teaser.gif" width="80%" alt="Untangle 宣传片片段：对照原文 → 三维 / promo clip: source check → 3D"></a>
 </p>
-<p align="center"><sub>28 秒 · 1080p · 点图播放 / click to play — 报告 → 墓葬表 → 对照原文 → 三维 · reports → tomb table → source check → 3D</sub></p>
+<p align="center">
+  ▶️ <a href="./assets/promo/untangle-promo.mp4"><b>完整版 · Full video</b></a>（28 秒 · 1080p · 有声 / with sound）<br>
+  <sub>报告 → 墓葬表 → 对照原文 → 三维 · reports → tomb table → source check → 3D</sub>
+</p>
 
 <a id="quick-start"></a>
 ## 🚀 Quick Start · 快速上手
