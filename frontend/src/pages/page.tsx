@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteFrame } from "@/components/site-frame";
+import { useLocale } from "@/lib/locale";
 import { TOOLS } from "@/lib/tools";
 
 const CARD_CLASS = ["issue-1", "issue-2", "issue-3", "issue-4"] as const;
@@ -40,23 +41,26 @@ function IssueMark({ index }: { index: number }) {
 }
 
 export default function LandingPage() {
+  const { c } = useLocale();
+
   return (
     <SiteFrame>
       <div className="socratica-home">
       <div className="home-sheet">
-        <p className="home-title">考古工具箱</p>
-        <p className="home-sub">
-          检索考古报告，抽取墓葬数据，再画成遗址地图和三维模型
-        </p>
-        <nav className="issue-grid" aria-label="考古工具入口">
-          {TOOLS.map((tool, index) => (
-            <Link key={tool.slug} href={tool.href} className={`issue-card ${CARD_CLASS[index]}`}>
-              <span className="issue-name">{tool.name}</span>
-              <span className="issue-kicker">工具 00{index + 1}</span>
-              <span className="issue-line">{tool.tagline}</span>
-              <IssueMark index={index} />
-            </Link>
-          ))}
+        <p className="home-title">{c.homeTitle}</p>
+        <p className="home-sub">{c.homeSub}</p>
+        <nav className="issue-grid" aria-label={c.homeNav}>
+          {TOOLS.map((tool, index) => {
+            const text = c.tools[tool.slug as keyof typeof c.tools]
+            return (
+              <Link key={tool.slug} href={tool.href} className={`issue-card ${CARD_CLASS[index]}`}>
+                <span className="issue-name">{text.name}</span>
+                <span className="issue-kicker">{c.toolKicker} 00{index + 1}</span>
+                <span className="issue-line">{text.tagline}</span>
+                <IssueMark index={index} />
+              </Link>
+            )
+          })}
         </nav>
       </div>
       </div>

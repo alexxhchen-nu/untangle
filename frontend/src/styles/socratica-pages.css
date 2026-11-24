@@ -302,6 +302,18 @@ body:has(.socratica-frame) {
   font-size: 13px;
 }
 
+.socratica-frame[data-lang="en"] .home-title,
+.socratica-frame[data-lang="en"] .issue-name,
+.socratica-frame[data-lang="en"] .tool-hero-center h1,
+.socratica-frame[data-lang="en"] .tool-panel-heading h2,
+.socratica-frame[data-lang="en"] .result-viewer-bar h2,
+.socratica-frame[data-lang="en"] .lib-card-title {
+  font-family: Palatino, "Palatino Linotype", "Iowan Old Style", "Times New Roman", serif;
+}
+
+.socratica-frame[data-lang="en"] .issue-name { font-size: 28px; }
+.socratica-frame[data-lang="en"] .issue-line { max-width: 92%; }
+
 @media (max-width: 800px) {
   .socratica-frame .tool-hero-center h1 {
     font-size: 34px;

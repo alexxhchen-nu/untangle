@@ -5,6 +5,7 @@ import type { GetStaticProps, InferGetStaticPropsType } from "next"
 import { useMemo, useState } from "react"
 import { SiteFrame } from "@/components/site-frame"
 import { StateNotice } from "@/components/state-notice"
+import { useLocale } from "@/lib/locale"
 import { ToolHero } from "@/components/tool-hero"
 import { ChevronRight } from "@/lib/icons"
 import { getTool } from "@/lib/tools"
@@ -91,6 +92,7 @@ export const getStaticProps: GetStaticProps<{ catalogue: Catalogue }> = async ()
 export default function LibraryPage({
   catalogue,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const { c } = useLocale()
   const [query, setQuery] = useState("")
   const [activeSeries, setActiveSeries] = useState<SeriesId>("all")
   const [expandedBookIds, setExpandedBookIds] = useState<Set<string>>(
@@ -142,11 +144,8 @@ export default function LibraryPage({
   return (
     <>
       <Head>
-        <title>资料库检索 · 考古工具箱</title>
-        <meta
-          name="description"
-          content="考古文献目录，集中查看 PDF、Markdown 解析结果与 CSV 数据。"
-        />
+        <title>{c.library.title}</title>
+        <meta name="description" content={c.library.description} />
       </Head>
 
       <SiteFrame>
@@ -156,10 +155,10 @@ export default function LibraryPage({
 
           <section className="tool-workbench-section">
             <div className="library-workbench">
-              <aside className="tool-panel library-controls" aria-label="资料库筛选">
+              <aside className="tool-panel library-controls" aria-label={c.library.filterAria}>
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">筛选</h2>
+                    <h2 className="font-serif text-xl font-medium">{c.library.filterHeading}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
                       {seriesDescription}
                     </p>
@@ -167,19 +166,19 @@ export default function LibraryPage({
                 </div>
 
                 <label className="search-field library-search">
-                  <span>检索标题、标签与摘要</span>
+                  <span>{c.library.searchLabel}</span>
                   <input
                     type="search"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
-                    placeholder="例如：战国 / 唐县 / 墓地"
+                    placeholder={c.library.searchPlaceholder}
                   />
                 </label>
 
-                <div className="filters library-filters" aria-label="系列筛选">
+                <div className="filters library-filters" aria-label={c.library.seriesAria}>
                   {seriesOrder.map((series) => {
                     const isActive = activeSeries === series
-                    const label = series === "all" ? "全部目录" : catalogue.seriesMeta[series].label
+                    const label = series === "all" ? c.library.allSeries : c.library.series[series] ?? catalogue.seriesMeta[series].label
 
                     return (
                       <button
@@ -198,17 +197,17 @@ export default function LibraryPage({
 
                 <div className="library-count">
                   <strong>{visibleBooks.length}</strong>
-                  <span>/ {catalogue.books.length} 册</span>
-                  <em>更新于 {catalogue._meta.lastUpdated}</em>
+                  <span>{c.library.volumes(catalogue.books.length)}</span>
+                  <em>{c.library.updated(catalogue._meta.lastUpdated)}</em>
                 </div>
               </aside>
 
               <section className="tool-panel catalogue">
                 <div className="tool-panel-heading catalogue-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">文献目录</h2>
+                    <h2 className="font-serif text-xl font-medium">{c.library.catalogue}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      选择条目后打开原始 PDF、解析 Markdown 或结构化 CSV。
+                      {c.library.catalogueHelp}
                     </p>
                   </div>
                 </div>
@@ -217,7 +216,7 @@ export default function LibraryPage({
                   {visibleBooks.length === 0 ? (
                     <StateNotice
                       kind="empty"
-                      title="没有匹配的报告"
+                      title={c.library.emptyTitle}
                       action={
                         <button
                           type="button"
@@ -227,19 +226,19 @@ export default function LibraryPage({
                             setActiveSeries("all")
                           }}
                         >
-                          清除筛选
+                          {c.library.clear}
                         </button>
                       }
                     >
-                      换一个地名、时代或遗址关键词试试。
+                      {c.library.emptyBody}
                     </StateNotice>
                   ) : (
                     visibleBooks.map((book) => {
                       const isExpanded = expandedBookIds.has(book.id)
                       const files = [
-                        { label: "原始 PDF", url: buildAssetUrl(catalogue.baseUrls.pdf, book.filename) },
-                        { label: "Markdown", url: buildAssetUrl(catalogue.baseUrls.markdown, book.markdownFilename) },
-                        { label: "CSV", url: buildAssetUrl(catalogue.baseUrls.csv, book.csvFilename) },
+                        { label: c.library.pdf, url: buildAssetUrl(catalogue.baseUrls.pdf, book.filename) },
+                        { label: c.library.markdown, url: buildAssetUrl(catalogue.baseUrls.markdown, book.markdownFilename) },
+                        { label: c.library.csv, url: buildAssetUrl(catalogue.baseUrls.csv, book.csvFilename) },
                       ]
 
                       return (
@@ -271,7 +270,7 @@ export default function LibraryPage({
                           </button>
 
                           {isExpanded ? (
-                            <div className="lib-card-files" aria-label={`${book.title} 文件`}>
+                            <div className="lib-card-files" aria-label={c.library.files(book.title)}>
                               {files.map((file) =>
                                 file.url ? (
                                   <a

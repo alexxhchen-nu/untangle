@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { FormEvent, Fragment, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { SiteFrame } from "@/components/site-frame";
+import type { Locale } from "@/lib/copy";
+import { useLocale } from "@/lib/locale";
 import { RoughMark } from "@/components/rough-mark";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
@@ -81,16 +83,17 @@ function formatDimensions(tomb: TombRecord) {
   return `${length} × ${width} × ${depth}`;
 }
 
-function artifactSummary(artifacts: Artifact[] | undefined) {
+function artifactSummary(artifacts: Artifact[] | undefined, locale: Locale = "zh") {
   if (!artifacts?.length) return "—";
 
   return artifacts
     .map((artifact) => {
-      const name = artifact["器物名称"] || artifact["器型"] || "未命名器物";
+      const name = artifact["器物名称"] || artifact["器型"] || (locale === "en" ? "unnamed object" : "未命名器物");
       const count = artifact["数量"];
-      return count ? `${name}${count}件` : name;
+      if (!count) return name;
+      return locale === "en" ? `${name} × ${count}` : `${name}${count}件`;
     })
-    .join("、");
+    .join(locale === "en" ? ", " : "、");
 }
 
 function evidenceFor(tomb: TombRecord, passage: string): (FieldEvidence & { empty: boolean })[] {
@@ -157,6 +160,7 @@ function downloadCsv(csv: string) {
 }
 
 export default function DynamicParserPage() {
+  const { c, locale } = useLocale();
   const [text, setText] = useState(exampleInput);
   const [parsedText, setParsedText] = useState("");
   const [state, setState] = useState<RunState>("idle");
@@ -220,7 +224,7 @@ export default function DynamicParserPage() {
       const payload = (await response.json()) as ParserResponse;
 
       if (!response.ok || payload.error || payload.detail) {
-        throw new Error(payload.error || payload.detail || `抽取失败：HTTP ${response.status}`);
+        throw new Error(payload.error || payload.detail || c.parser.http(response.status));
       }
 
       setResult(payload.data ?? null);
@@ -229,7 +233,7 @@ export default function DynamicParserPage() {
       setEditing(false);
       setState("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "墓葬文本抽取失败。");
+      setError(err instanceof Error ? err.message : c.parser.failed);
       setState("error");
     }
   }
@@ -288,8 +292,8 @@ export default function DynamicParserPage() {
   return (
     <>
       <Head>
-        <title>墓葬文本抽取 · 考古工具箱</title>
-        <meta name="description" content="从墓葬报告文本中抽取墓葬、尺寸与随葬器物字段。" />
+        <title>{c.parser.title}</title>
+        <meta name="description" content={c.parser.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -303,22 +307,20 @@ export default function DynamicParserPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading source-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">{showSource ? "原文对照" : "输入文本"}</h2>
+                    <h2 className="font-serif text-xl font-medium">{showSource ? c.parser.sourceHeading : c.parser.inputHeading}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      {showSource
-                        ? "点任一段落或右侧表格行，两边会同步定位；红色标记是抽取到的字段在原文中的位置。"
-                        : "粘贴墓葬段落、Markdown 或发掘简报正文。"}
+                      {showSource ? c.parser.sourceHelp : c.parser.inputHelp}
                     </p>
                   </div>
                   {showSource ? (
                     <button type="button" className="source-edit-button" onClick={() => setEditing(true)}>
-                      编辑原文
+                      {c.parser.editSource}
                     </button>
                   ) : null}
                 </div>
 
                 {showSource ? (
-                  <div className="source-view" aria-label="原文对照">
+                  <div className="source-view" aria-label={c.parser.sourceAria}>
                     {segments.length ? renderSource() : <div className="source-gap">{parsedText}</div>}
                   </div>
                 ) : (
@@ -328,17 +330,17 @@ export default function DynamicParserPage() {
                       value={text}
                       onChange={(event) => setText(event.target.value)}
                       spellCheck={false}
-                      aria-label="墓葬报告文本"
+                      aria-label={c.parser.textAria}
                     />
 
                     <div className="actions">
                       <button type="submit" disabled={!text.trim() || state === "loading"}>
                         {state === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                        {state === "loading" ? "抽取中..." : state === "done" ? "重新抽取" : "抽取墓葬信息"}
+                        {state === "loading" ? c.parser.extracting : state === "done" ? c.parser.again : c.parser.extract}
                       </button>
                       {state === "done" ? (
                         <button type="button" className="source-cancel-button" onClick={() => setEditing(false)}>
-                          返回对照
+                          {c.parser.back}
                         </button>
                       ) : null}
                     </div>
@@ -349,29 +351,29 @@ export default function DynamicParserPage() {
               <section className="tool-panel model-panel parser-results-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">抽取结果</h2>
+                    <h2 className="font-serif text-xl font-medium">{c.parser.results}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      结果可继续导出为 CSV，用于三维建模或 GIS 分析。
+                      {c.parser.resultsHelp}
                     </p>
                   </div>
                 </div>
 
                 <div className="parser-result-body">
                   {state === "idle" ? (
-                    <StateNotice kind="empty" title="还没有抽取结果">
-                      在左边粘贴墓葬段落，点「抽取墓葬信息」。结果会显示成墓葬表，并和原文逐段对照。
+                    <StateNotice kind="empty" title={c.parser.emptyTitle}>
+                      {c.parser.emptyBody}
                     </StateNotice>
                   ) : null}
 
                   {state === "loading" ? (
-                    <StateNotice kind="loading" title="正在抽取">
-                      后端正在按墓葬编号切分原文、抽取字段，通常几秒钟内完成。
+                    <StateNotice kind="loading" title={c.parser.loadingTitle}>
+                      {c.parser.loadingBody}
                     </StateNotice>
                   ) : null}
 
                   {state === "error" && error ? (
-                    <StateNotice kind="error" title="抽取没有成功">
-                      {error}。确认后端在运行（127.0.0.1:8000），然后再试一次。
+                    <StateNotice kind="error" title={c.parser.errorTitle}>
+                      {error}. {c.parser.errorHint}
                     </StateNotice>
                   ) : null}
 
@@ -379,15 +381,15 @@ export default function DynamicParserPage() {
                     <>
                       <dl className="stats-grid parser-stats">
                         <div>
-                          <dt>墓葬数</dt>
+                          <dt>{c.parser.tombs}</dt>
                           <dd>{tombs.length}</dd>
                         </div>
                         <div>
-                          <dt>器物记录</dt>
+                          <dt>{c.parser.artifacts}</dt>
                           <dd>{artifactCount}</dd>
                         </div>
                         <div>
-                          <dt>原文定位</dt>
+                          <dt>{c.parser.located}</dt>
                           <dd>
                             {segments.length}/{tombs.length}
                           </dd>
@@ -399,12 +401,9 @@ export default function DynamicParserPage() {
                           <table className="parser-table">
                             <thead>
                               <tr>
-                                <th>编号</th>
-                                <th>年代</th>
-                                <th>形制</th>
-                                <th>墓向</th>
-                                <th>尺寸 长×宽×深</th>
-                                <th>随葬器物</th>
+                                {c.parser.cols.map((col) => (
+                                  <th key={col}>{col}</th>
+                                ))}
                               </tr>
                             </thead>
                             <tbody>
@@ -435,35 +434,35 @@ export default function DynamicParserPage() {
                                     }
                                   }}
                                 >
-                                  <td data-label="编号">{formatValue(tomb["墓葬编号"])}</td>
-                                  <td data-label="年代">{formatValue(tomb["年代"])}</td>
-                                  <td data-label="形制">{formatValue(tomb["墓葬形制"])}</td>
-                                  <td data-label="墓向">{formatValue(tomb["墓向"])}</td>
-                                  <td data-label="尺寸">{formatDimensions(tomb)}</td>
-                                  <td data-label="随葬器物">{artifactSummary(tomb["随葬器物"])}</td>
+                                  <td data-label={c.parser.cols[0]}>{formatValue(tomb["墓葬编号"])}</td>
+                                  <td data-label={c.parser.cols[1]}>{formatValue(tomb["年代"])}</td>
+                                  <td data-label={c.parser.cols[2]}>{formatValue(tomb["墓葬形制"])}</td>
+                                  <td data-label={c.parser.cols[3]}>{formatValue(tomb["墓向"])}</td>
+                                  <td data-label={c.parser.cols[4]}>{formatDimensions(tomb)}</td>
+                                  <td data-label={c.parser.cols[5]}>{artifactSummary(tomb["随葬器物"], locale)}</td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                         </div>
                       ) : (
-                        <StateNotice kind="empty" title="没有识别到墓葬">
-                          原文里要有「## M1」这样的墓葬编号标题，或「M1位于……」这样的描述句。
+                        <StateNotice kind="empty" title={c.parser.noneTitle}>
+                          {c.parser.noneBody}
                         </StateNotice>
                       )}
 
                       {selectedTomb ? (
-                        <section className="evidence-card" aria-label={`${selectedTomb["墓葬编号"]} 字段核对`}>
+                        <section className="evidence-card" aria-label={c.parser.check(formatValue(selectedTomb["墓葬编号"]))}>
                           <header>
-                            <h3>{formatValue(selectedTomb["墓葬编号"])} 字段核对</h3>
+                            <h3>{c.parser.check(formatValue(selectedTomb["墓葬编号"]))}</h3>
                             <span className={unverified || emptyCount || !selectedSegment ? "evidence-flag" : "evidence-ok"}>
                               {!selectedSegment
-                                ? "原文中未找到这座墓"
+                                ? c.parser.missingTomb
                                 : unverified
-                                  ? `${unverified} 项在原文中找不到，请人工核对`
+                                  ? c.parser.unverified(unverified)
                                   : emptyCount
-                                    ? `已抽取字段都能在原文中找到 · ${emptyCount} 项未抽取`
-                                    : "所有字段都能在原文中找到"}
+                                    ? c.parser.partial(emptyCount)
+                                    : c.parser.allFound}
                             </span>
                           </header>
                           {evidence.length ? (
@@ -473,17 +472,17 @@ export default function DynamicParserPage() {
                                   key={item.label}
                                   className={item.empty ? "is-empty" : item.found ? undefined : "is-missing"}
                                 >
-                                  <span>{item.label}</span>
+                                  <span>{c.parser.fields[item.label] ?? item.label}</span>
                                   <strong>{item.value}</strong>
-                                  <em>{item.empty ? "未抽取，看原文补" : item.found ? "原文有" : "推断或待核"}</em>
+                                  <em>{item.empty ? c.parser.notExtracted : item.found ? c.parser.inSource : c.parser.inferred}</em>
                                 </li>
                               ))}
                             </ul>
                           ) : (
-                            <p className="evidence-empty">这座墓没有抽取到可核对的字段。</p>
+                            <p className="evidence-empty">{c.parser.noFields}</p>
                           )}
                           {selectedTomb["随葬器物"]?.length ? (
-                            <p className="evidence-artifacts">随葬器物：{artifactSummary(selectedTomb["随葬器物"])}</p>
+                            <p className="evidence-artifacts">{c.parser.goods}{artifactSummary(selectedTomb["随葬器物"], locale)}</p>
                           ) : null}
                         </section>
                       ) : null}
@@ -497,19 +496,19 @@ export default function DynamicParserPage() {
                           }}
                         >
                           <Download className="h-4 w-4" />
-                          下载 CSV
+                          {c.parser.download}
                         </button>
                       </div>
 
                       {result.markdown ? (
                         <details className="parser-details">
-                          <summary>Markdown 预览</summary>
+                          <summary>{c.parser.markdown}</summary>
                           <pre>{result.markdown}</pre>
                         </details>
                       ) : null}
 
                       <details className="parser-details">
-                        <summary>JSON 预览</summary>
+                        <summary>{c.parser.json}</summary>
                         <pre>{JSON.stringify(result.json ?? result, null, 2)}</pre>
                       </details>
                     </>

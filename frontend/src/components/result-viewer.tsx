@@ -1,4 +1,5 @@
 import { ArrowRight } from "@/lib/icons"
+import { useLocale } from "@/lib/locale"
 
 export interface ViewerItem {
   key: string
@@ -16,6 +17,7 @@ interface ResultViewerProps {
 
 // Shows generated HTML (maps, 3D scenes) inside the page instead of a new tab.
 export function ResultViewer({ title, items, activeKey, onSelect }: ResultViewerProps) {
+  const { c } = useLocale()
   const active = items.find((item) => item.key === activeKey) ?? items[0]
 
   if (!active) {
@@ -27,7 +29,7 @@ export function ResultViewer({ title, items, activeKey, onSelect }: ResultViewer
       <div className="result-viewer-bar">
         <h2>{title}</h2>
         {items.length > 1 ? (
-          <div className="result-viewer-tabs" role="tablist" aria-label={`${title}列表`}>
+          <div className="result-viewer-tabs" role="tablist" aria-label={c.viewer.list(title)}>
             {items.map((item) => (
               <button
                 key={item.key}
@@ -44,7 +46,7 @@ export function ResultViewer({ title, items, activeKey, onSelect }: ResultViewer
           </div>
         ) : null}
         <a className="btn btn-sm btn-secondary result-viewer-open" href={active.url} target="_blank" rel="noreferrer">
-          在新标签页打开
+          {c.viewer.open}
           <ArrowRight className="h-4 w-4" />
         </a>
       </div>
