@@ -1,8 +1,6 @@
 import Link from "next/link";
+import { SiteFrame } from "@/components/site-frame";
 import { TOOLS } from "@/lib/tools";
-
-const MARQUEE =
-  "检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型 • 检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型 • 检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型";
 
 const CARD_CLASS = ["issue-1", "issue-2", "issue-3", "issue-4"] as const;
 
@@ -43,10 +41,8 @@ function IssueMark({ index }: { index: number }) {
 
 export default function LandingPage() {
   return (
-    <div className="socratica-home">
-      <div className="home-marquee">
-        <p>{MARQUEE}</p>
-      </div>
+    <SiteFrame>
+      <div className="socratica-home">
       <div className="home-sheet">
         <p className="home-title">考古工具箱</p>
         <p className="home-sub">
@@ -63,6 +59,7 @@ export default function LandingPage() {
           ))}
         </nav>
       </div>
-    </div>
+      </div>
+    </SiteFrame>
   );
 }

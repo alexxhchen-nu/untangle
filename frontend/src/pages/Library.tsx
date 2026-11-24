@@ -3,6 +3,7 @@ import path from "node:path"
 import Head from "next/head"
 import type { GetStaticProps, InferGetStaticPropsType } from "next"
 import { useMemo, useState } from "react"
+import { SiteFrame } from "@/components/site-frame"
 import { StateNotice } from "@/components/state-notice"
 import { ToolHero } from "@/components/tool-hero"
 import { ChevronRight } from "@/lib/icons"
@@ -132,7 +133,8 @@ export default function LibraryPage({
         />
       </Head>
 
-      <div className="tool-page-shell library-page">
+      <SiteFrame>
+      <div className="tool-page-shell library-page" data-accent="library">
         <main className="tool-page-main">
           <ToolHero tool={tool} />
 
@@ -283,6 +285,7 @@ export default function LibraryPage({
           </section>
         </main>
       </div>
+      </SiteFrame>
     </>
   )
 }

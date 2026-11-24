@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { SiteFrame } from "@/components/site-frame";
 import { ResultViewer } from "@/components/result-viewer";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
@@ -115,7 +116,8 @@ export default function ModellingPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="tool-page-shell">
+      <SiteFrame>
+      <div className="tool-page-shell" data-accent="modelling">
         <main className="tool-page-main">
           <ToolHero tool={tool} />
 
@@ -221,6 +223,7 @@ export default function ModellingPage() {
           ) : null}
         </main>
       </div>
+      </SiteFrame>
     </>
   );
 }

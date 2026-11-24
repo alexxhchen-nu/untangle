@@ -1,12 +1,8 @@
-.socratica-home {
-  min-height: 100vh;
-  background-color: #f7f5eb;
-  background-image: url("/socratica/bg.png");
-  background-repeat: repeat;
-  background-size: auto;
+.socratica-frame .socratica-home {
+  min-height: 0;
+  background: transparent;
   color: #5c534b;
   font-family: "Noto Sans SC", "Instrument Sans Variable", system-ui, sans-serif;
-  overflow-x: hidden;
 }
 
 .socratica-home,

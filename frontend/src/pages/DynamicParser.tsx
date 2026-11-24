@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { FormEvent, Fragment, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { SiteFrame } from "@/components/site-frame";
 import { RoughMark } from "@/components/rough-mark";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
@@ -292,7 +293,8 @@ export default function DynamicParserPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="tool-page-shell">
+      <SiteFrame>
+      <div className="tool-page-shell" data-accent="parser">
         <main className="tool-page-main">
           <ToolHero tool={tool} />
 
@@ -518,6 +520,7 @@ export default function DynamicParserPage() {
           </section>
         </main>
       </div>
+      </SiteFrame>
     </>
   );
 }
