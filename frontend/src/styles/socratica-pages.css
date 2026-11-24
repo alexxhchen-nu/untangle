@@ -1,0 +1,335 @@
+body:has(.socratica-frame) {
+  background-color: #f7f5eb;
+  background-image: url("/socratica/bg.png");
+  background-repeat: repeat;
+  color: #3f3832;
+}
+
+.socratica-frame {
+  min-height: 100vh;
+  color: #3f3832;
+}
+
+.socratica-frame [data-accent="library"] { --page-accent: #649aea; }
+.socratica-frame [data-accent="parser"] { --page-accent: #8d9558; }
+.socratica-frame [data-accent="gis"] { --page-accent: #bf7d1a; }
+.socratica-frame [data-accent="modelling"] { --page-accent: #ad7e95; }
+
+.socratica-frame .tool-page-shell,
+.socratica-frame .tool-hero,
+.socratica-frame .tool-page-main {
+  background: transparent;
+}
+
+.socratica-frame .tool-page-main {
+  width: min(1120px, 92%);
+  margin: 0 auto;
+  padding: 8px 0 96px;
+  gap: 20px;
+}
+
+.socratica-frame .tool-hero-inner,
+.socratica-frame .tool-workbench-section {
+  width: 100%;
+}
+
+.socratica-frame .tool-crumbs {
+  margin: 28px 0 0;
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.socratica-frame .tool-crumbs a {
+  color: #635b8f;
+}
+
+.socratica-frame .tool-crumbs a:hover {
+  color: #3f3832;
+}
+
+.socratica-frame .tool-hero-center {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 0 8px;
+  text-align: left;
+}
+
+.socratica-frame .tool-hero-center .tool-hero-icon {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  margin: 0;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--page-accent, #649aea);
+}
+
+.socratica-frame .tool-kicker {
+  margin: 0 0 4px;
+  color: var(--page-accent, #635b8f);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.socratica-frame .tool-hero-center h1 {
+  margin: 0;
+  color: #5c534b;
+  font-family: "Zhuque Fangsong", "Noto Serif SC", serif;
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.socratica-frame .tool-hero-center .tool-hero-copy {
+  max-width: 40rem;
+  margin: 8px 0 0;
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.socratica-frame .tool-panel {
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 253, 246, 0.94);
+  box-shadow: none;
+  padding: 18px;
+}
+
+.socratica-frame .tool-panel-heading {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.socratica-frame .tool-panel-heading h2,
+.socratica-frame .result-viewer-bar h2 {
+  color: #5c534b;
+  font-family: "Zhuque Fangsong", "Noto Serif SC", serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.socratica-frame .tool-panel-heading p {
+  display: block;
+  overflow: visible;
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  -webkit-line-clamp: unset;
+}
+
+.socratica-frame .library-search span,
+.socratica-frame .file-picker span,
+.socratica-frame .field-group span,
+.socratica-frame .library-count em,
+.socratica-frame .stats-grid dt {
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.socratica-frame .search-field input,
+.socratica-frame .file-picker input,
+.socratica-frame .field-group select,
+.socratica-frame .tool-panel select,
+.socratica-frame .tool-textarea,
+.socratica-frame .parser-textarea {
+  border: 1.5px solid rgba(0, 0, 0, 0.14);
+  border-radius: 6px;
+  background: #fff;
+  color: #3f3832;
+}
+
+.socratica-frame .search-field input:focus,
+.socratica-frame .tool-textarea:focus,
+.socratica-frame .field-group select:focus {
+  outline: 2px solid var(--page-accent, #649aea);
+  outline-offset: 1px;
+}
+
+.socratica-frame .actions button,
+.socratica-frame .actions a,
+.socratica-frame .result-link,
+.socratica-frame .btn,
+.socratica-frame .source-edit-button,
+.socratica-frame .source-cancel-button,
+.socratica-frame .site-result-row button,
+.socratica-frame .library-filters .filter {
+  border-radius: 6px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.socratica-frame .actions button[type="submit"],
+.socratica-frame .btn-primary {
+  border: 0;
+  color: #fff;
+  background: #161513;
+}
+
+.socratica-frame .actions button[type="submit"]:hover:not(:disabled),
+.socratica-frame .btn-primary:hover {
+  border: 0;
+  color: #fff;
+  background: #3a342e;
+}
+
+.socratica-frame .btn-secondary,
+.socratica-frame .actions a,
+.socratica-frame .result-link,
+.socratica-frame .source-edit-button,
+.socratica-frame .source-cancel-button,
+.socratica-frame .site-result-row button,
+.socratica-frame .library-filters .filter {
+  border: 1.5px solid rgba(0, 0, 0, 0.16);
+  color: #3f3832;
+  background: #fff;
+}
+
+.socratica-frame .btn-secondary:hover,
+.socratica-frame .actions a:hover,
+.socratica-frame .result-link:hover,
+.socratica-frame .library-filters .filter:hover,
+.socratica-frame .source-edit-button:hover,
+.socratica-frame .site-result-row button:hover {
+  border-color: var(--page-accent, #161513);
+  color: #3f3832;
+  background: #fff;
+}
+
+.socratica-frame .library-filters .filter.is-active,
+.socratica-frame .library-filters .filter[data-series].is-active,
+.socratica-frame .site-result-row button[aria-pressed="true"],
+.socratica-frame .result-viewer-tab.is-active {
+  border-color: transparent;
+  color: #fff;
+  background: var(--page-accent, #161513);
+}
+
+.socratica-frame .library-count {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+.socratica-frame .library-count strong,
+.socratica-frame .stats-grid dd {
+  color: var(--page-accent, #5c534b);
+  font-family: "Zhuque Fangsong", "Noto Serif SC", serif;
+  font-weight: 400;
+}
+
+.socratica-frame .stats-grid > div,
+.socratica-frame .state-notice,
+.socratica-frame .parser-table-wrap,
+.socratica-frame .source-view,
+.socratica-frame .evidence-card,
+.socratica-frame .parser-details,
+.socratica-frame .lib-card {
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.socratica-frame .lib-card:hover,
+.socratica-frame .lib-card.is-open {
+  border-color: var(--page-accent, #a1a1aa);
+}
+
+.socratica-frame .lib-card-title {
+  color: #3f3832;
+  font-family: "Zhuque Fangsong", "Noto Serif SC", serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.socratica-frame .lib-tag {
+  border-radius: 999px;
+  background: #f7f5eb;
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+.socratica-frame .parser-table th {
+  color: #635b8f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.socratica-frame .parser-table tbody tr.is-selected {
+  background: color-mix(in srgb, var(--page-accent, #8d9558) 18%, white);
+}
+
+.socratica-frame .state-notice-icon {
+  border-radius: 8px;
+  color: #fff;
+  background: var(--page-accent, #161513);
+}
+
+.socratica-frame .state-notice--error {
+  border-color: rgba(185, 28, 28, 0.28);
+  background: #fff;
+}
+
+.socratica-frame .state-notice--error .state-notice-icon {
+  background: #b91c1c;
+}
+
+.socratica-frame .result-viewer-frame {
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.socratica-frame .checkbox-field {
+  color: #3f3832;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 13px;
+}
+
+.socratica-frame[data-lang="en"] .home-title,
+.socratica-frame[data-lang="en"] .issue-name,
+.socratica-frame[data-lang="en"] .tool-hero-center h1,
+.socratica-frame[data-lang="en"] .tool-panel-heading h2,
+.socratica-frame[data-lang="en"] .result-viewer-bar h2,
+.socratica-frame[data-lang="en"] .lib-card-title {
+  font-family: Palatino, "Palatino Linotype", "Iowan Old Style", "Times New Roman", serif;
+}
+
+.socratica-frame[data-lang="en"] .issue-name { font-size: 28px; }
+.socratica-frame[data-lang="en"] .issue-line { max-width: 92%; }
+
+@media (max-width: 800px) {
+  .socratica-frame .tool-hero-center h1 {
+    font-size: 34px;
+  }
+
+  .socratica-frame .tool-hero-center {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .socratica-frame .tool-hero-center .tool-hero-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .socratica-frame .tool-panel-heading h2 {
+    font-size: 24px;
+  }
+}

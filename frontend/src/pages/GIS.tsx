@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { SiteFrame } from "@/components/site-frame";
 import { ResultViewer } from "@/components/result-viewer";
+import { useLocale } from "@/lib/locale";
 import { StateNotice } from "@/components/state-notice";
 import { ToolHero } from "@/components/tool-hero";
 import { resolveEndpoint } from "@/lib/api-client";
@@ -34,19 +36,8 @@ type SiteMapResult = {
   url: string;
 };
 
-const coordModeLabels: Record<CoordMode, string> = {
-  auto: "自动检测",
-  exact: "精确坐标",
-  jitter: "站点中心偏移",
-  none: "站点中心",
-};
-
 function formatStat(value: number | undefined) {
   return Number.isFinite(value) ? String(value) : "—";
-}
-
-function formatSiteCount(count: number | undefined) {
-  return typeof count === "number" ? `${count} 座墓葬` : "站点地图";
 }
 
 function revokeUrls(urls: string[]) {
@@ -57,7 +48,8 @@ function revokeUrls(urls: string[]) {
 
 export default function GISPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [status, setStatus] = useState("选择一个包含遗址、墓葬或坐标字段的 CSV 文件。");
+  const { c } = useLocale();
+  const [status, setStatus] = useState("");
   const [runState, setRunState] = useState<RunState>("idle");
   const [isGenerating, setIsGenerating] = useState(false);
   const [coordMode, setCoordMode] = useState<CoordMode>("auto");
@@ -87,7 +79,7 @@ export default function GISPage() {
 
     setIsGenerating(true);
     setRunState("loading");
-    setStatus("正在上传并生成地图...");
+    setStatus(c.gis.uploading);
     setStats(null);
     setSiteMaps([]);
     setOverviewUrl(null);
@@ -105,7 +97,7 @@ export default function GISPage() {
 
       const payload = (await response.json()) as GISResponse;
       if (!response.ok || payload.error || payload.detail) {
-        throw new Error(payload.error || payload.detail || `生成失败：HTTP ${response.status}`);
+        throw new Error(payload.error || payload.detail || c.gis.http(response.status));
       }
 
       const sites = payload.data?.sites ?? {};
@@ -127,7 +119,7 @@ export default function GISPage() {
       }
 
       if (!nextOverviewUrl && nextSiteMaps.length === 0) {
-        throw new Error("后端没有返回可打开的地图 HTML。");
+        throw new Error(c.gis.noHtml);
       }
 
       replaceGeneratedUrls(generatedUrls);
@@ -142,11 +134,11 @@ export default function GISPage() {
       const siteCount = payload.data?.stats?.site_count ?? nextSiteMaps.length;
       setStatus(
         total
-          ? `已生成 ${total} 座墓葬、${siteCount} 个站点地图。`
-          : `已生成 ${siteCount} 个站点地图。`,
+          ? c.gis.doneBoth(total, siteCount)
+          : c.gis.doneSites(siteCount),
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "生成失败。";
+      const message = error instanceof Error ? error.message : c.gis.failed;
       replaceGeneratedUrls([]);
       setRunState("error");
       setStats(null);
@@ -165,12 +157,13 @@ export default function GISPage() {
   return (
     <>
       <Head>
-        <title>遗址空间分析 · 考古工具箱</title>
-        <meta name="description" content="上传墓葬或遗址 CSV，生成可打开的交互式 GIS 地图。" />
+        <title>{c.gis.title}</title>
+        <meta name="description" content={c.gis.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="tool-page-shell">
+      <SiteFrame>
+      <div className="tool-page-shell" data-accent="gis">
         <main className="tool-page-main">
           <ToolHero tool={tool} />
 
@@ -179,16 +172,16 @@ export default function GISPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">生成地图</h2>
+                    <h2 className="font-serif text-xl font-medium">{c.gis.heading}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      上传 CSV 后生成站点地图，地图会显示在下方。
+                      {c.gis.help}
                     </p>
                   </div>
                 </div>
 
                 <form className="upload-form" onSubmit={handleSubmit}>
                   <label className="file-picker">
-                    <span>CSV 数据文件</span>
+                    <span>{c.gis.file}</span>
                     <input
                       type="file"
                       accept=".csv,text/csv"
@@ -198,12 +191,12 @@ export default function GISPage() {
 
                   <div className="gis-options">
                     <label className="field-group">
-                      <span>坐标模式</span>
+                      <span>{c.gis.coord}</span>
                       <select value={coordMode} onChange={(event) => setCoordMode(event.target.value as CoordMode)}>
-                        <option value="auto">自动检测</option>
-                        <option value="exact">使用精确坐标</option>
-                        <option value="jitter">站点中心偏移</option>
-                        <option value="none">站点中心</option>
+                        <option value="auto">{c.gis.modes.auto}</option>
+                        <option value="exact">{c.gis.modes.exact}</option>
+                        <option value="jitter">{c.gis.modes.jitter}</option>
+                        <option value="none">{c.gis.modes.none}</option>
                       </select>
                     </label>
 
@@ -213,14 +206,14 @@ export default function GISPage() {
                         checked={includeOverview}
                         onChange={(event) => setIncludeOverview(event.target.checked)}
                       />
-                      <span>同时生成总览地图</span>
+                      <span>{c.gis.overviewToggle}</span>
                     </label>
                   </div>
 
                   <div className="actions">
                     <button type="submit" disabled={!selectedFile || isGenerating}>
                       {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
-                      {isGenerating ? "生成中..." : "生成地图"}
+                      {isGenerating ? c.gis.working : c.gis.submit}
                     </button>
                   </div>
                 </form>
@@ -229,26 +222,26 @@ export default function GISPage() {
               <section className="tool-panel model-panel">
                 <div className="tool-panel-heading">
                   <div>
-                    <h2 className="font-serif text-xl font-medium">结果</h2>
+                    <h2 className="font-serif text-xl font-medium">{c.gis.results}</h2>
                     <p className="mt-1 text-sm leading-7 text-foreground/70">
-                      生成后可以重新打开总览或单站点地图。
+                      {c.gis.resultsHelp}
                     </p>
                   </div>
                 </div>
 
                 <div className={`model-status-panel gis-results-panel model-status-panel--${runState}`}>
                   {runState === "idle" ? (
-                    <StateNotice kind="empty" title="还没有生成地图" compact>
-                      生成后会显示墓葬总数、站点数、坐标模式，并保留总览和站点地图入口。
+                    <StateNotice kind="empty" title={c.gis.emptyTitle} compact>
+                      {c.gis.emptyBody}
                     </StateNotice>
                   ) : null}
 
                   {runState === "error" ? (
-                    <StateNotice kind="error" title="生成没有成功" compact>
+                    <StateNotice kind="error" title={c.gis.errorTitle} compact>
                       {status}
                     </StateNotice>
                   ) : runState === "loading" ? (
-                    <StateNotice kind="loading" title="正在生成" compact>
+                    <StateNotice kind="loading" title={c.gis.loadingTitle} compact>
                       {status}
                     </StateNotice>
                   ) : (
@@ -258,16 +251,16 @@ export default function GISPage() {
                   {stats ? (
                     <dl className="stats-grid">
                       <div>
-                        <dt>墓葬数</dt>
+                        <dt>{c.gis.tombs}</dt>
                         <dd>{formatStat(stats.total_tombs)}</dd>
                       </div>
                       <div>
-                        <dt>站点数</dt>
+                        <dt>{c.gis.sites}</dt>
                         <dd>{formatStat(stats.site_count ?? siteMaps.length)}</dd>
                       </div>
                       <div>
-                        <dt>坐标模式</dt>
-                        <dd>{coordModeLabels[stats.coord_mode ?? coordMode]}</dd>
+                        <dt>{c.gis.mode}</dt>
+                        <dd>{c.gis.modes[stats.coord_mode ?? coordMode]}</dd>
                       </div>
                     </dl>
                   ) : null}
@@ -275,18 +268,18 @@ export default function GISPage() {
                   {overviewUrl ? (
                     <button type="button" className="result-link" onClick={() => setActiveMap("__overview")}>
                       <MapPinned className="h-4 w-4" />
-                      查看总览地图
+                      {c.gis.viewOverview}
                     </button>
                   ) : null}
 
                   {siteMaps.length > 0 ? (
                     <div className="site-result-list">
-                      <h3>站点地图</h3>
+                      <h3>{c.gis.siteMaps}</h3>
                       {siteMaps.map((site) => (
                         <div className="site-result-row" key={site.key}>
                           <div>
                             <strong>{site.key}</strong>
-                            <span>{formatSiteCount(site.count)}</span>
+                            <span>{typeof site.count === "number" ? c.gis.tombCount(site.count) : c.gis.siteMap}</span>
                           </div>
                           <button
                             type="button"
@@ -294,7 +287,7 @@ export default function GISPage() {
                             onClick={() => setActiveMap(site.key)}
                           >
                             <MapPinned className="h-4 w-4" />
-                            查看地图
+                            {c.gis.viewMap}
                           </button>
                         </div>
                       ))}
@@ -307,9 +300,9 @@ export default function GISPage() {
 
           {overviewUrl || siteMaps.length > 0 ? (
             <ResultViewer
-              title="地图"
+              title={c.gis.viewer}
               items={[
-                ...(overviewUrl ? [{ key: "__overview", label: "总览", url: overviewUrl }] : []),
+                ...(overviewUrl ? [{ key: "__overview", label: c.gis.overview, url: overviewUrl }] : []),
                 ...siteMaps.map((site) => ({
                   key: site.key,
                   label: site.key,
@@ -323,6 +316,7 @@ export default function GISPage() {
           ) : null}
         </main>
       </div>
+      </SiteFrame>
     </>
   );
 }
