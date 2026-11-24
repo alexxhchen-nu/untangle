@@ -3,6 +3,7 @@ import Head from "next/head"
 
 import "@fontsource-variable/instrument-sans"
 import "@/styles/globals.css"
+import "@/styles/socratica-home.css"
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

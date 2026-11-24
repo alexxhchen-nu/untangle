@@ -1,53 +1,68 @@
 import Link from "next/link";
-import { RoughMark } from "@/components/rough-mark";
-import { ChevronRight } from "@/lib/icons";
 import { TOOLS } from "@/lib/tools";
+
+const MARQUEE =
+  "检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型 • 检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型 • 检索考古报告 • 抽取墓葬数据 • 逐条对照原文 • 画成遗址地图 • 生成三维模型";
+
+const CARD_CLASS = ["issue-1", "issue-2", "issue-3", "issue-4"] as const;
+
+function IssueMark({ index }: { index: number }) {
+  if (index === 0) {
+    return (
+      <svg className="issue-illo illo-1" viewBox="0 0 140 90" aria-hidden="true">
+        <path d="M18 70c18-28 40-28 52 0 12-28 34-28 52 0" fill="none" stroke="#f7f5eb" strokeWidth="8" strokeLinecap="round" />
+        <rect x="28" y="28" width="84" height="52" rx="6" fill="#f7f5eb" />
+        <path d="M40 44h60M40 56h44" stroke="#649aea" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (index === 1) {
+    return (
+      <svg className="issue-illo illo-2" viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M34 18c-16 18-16 66 0 84M86 18c16 18 16 66 0 84" fill="none" stroke="#f7f5eb" strokeWidth="8" strokeLinecap="round" />
+        <path d="M48 42h28M48 60h36M48 78h22" stroke="#f7f5eb" strokeWidth="5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (index === 2) {
+    return (
+      <svg className="issue-illo illo-3" viewBox="0 0 140 110" aria-hidden="true">
+        <path d="M12 78l34-30 22 16 28-34 32 48H12z" fill="#f4e2b0" />
+        <circle cx="96" cy="34" r="14" fill="#f7f5eb" />
+        <path d="M96 48v22" stroke="#f7f5eb" strokeWidth="6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="issue-illo illo-4" viewBox="0 0 120 130" aria-hidden="true">
+      <path d="M20 48l40-22 40 22v52l-40 22-40-22V48z" fill="#f7f5eb" />
+      <path d="M20 48l40 22 40-22M60 70v52" fill="none" stroke="#ad7e95" strokeWidth="4" />
+    </svg>
+  );
+}
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
-      <main className="toolbox-home">
-        <header className="home-hero">
-          <span className="home-mark" aria-hidden="true">
-            考
-          </span>
-          <h1>
-            考古
-            <RoughMark type="underline" color="#dc2626" strokeWidth={4} padding={[0, 2]} delay={200}>
-              工具箱
-            </RoughMark>
-          </h1>
-          <p>
-            检索考古报告，抽取
-            <RoughMark type="highlight" color="#fde047" delay={900}>
-              墓葬数据
-            </RoughMark>
-            ，再画成遗址地图和三维模型。
-          </p>
-        </header>
-
-        <nav className="toolbox-list" aria-label="考古工具入口">
-          {TOOLS.map((tool) => {
-            const Icon = tool.icon;
-
-            return (
-              <Link key={tool.slug} href={tool.href} className="toolbox-list-item">
-                <span className="toolbox-list-media" data-index={tool.index}>
-                  <span className="toolbox-list-icon">
-                    <Icon className="h-6 w-6" />
-                  </span>
-                </span>
-                <span className="toolbox-list-copy">
-                  <span className="toolbox-list-step">{tool.index}</span>
-                  <strong>{tool.name}</strong>
-                  <em>{tool.tagline}</em>
-                </span>
-                <ChevronRight className="toolbox-list-arrow h-4 w-4" />
-              </Link>
-            );
-          })}
+    <div className="socratica-home">
+      <div className="home-marquee">
+        <p>{MARQUEE}</p>
+      </div>
+      <div className="home-sheet">
+        <p className="home-title">考古工具箱</p>
+        <p className="home-sub">
+          检索考古报告，抽取墓葬数据，再画成遗址地图和三维模型
+        </p>
+        <nav className="issue-grid" aria-label="考古工具入口">
+          {TOOLS.map((tool, index) => (
+            <Link key={tool.slug} href={tool.href} className={`issue-card ${CARD_CLASS[index]}`}>
+              <span className="issue-name">{tool.name}</span>
+              <span className="issue-kicker">工具 00{index + 1}</span>
+              <span className="issue-line">{tool.tagline}</span>
+              <IssueMark index={index} />
+            </Link>
+          ))}
         </nav>
-      </main>
+      </div>
     </div>
   );
 }
