@@ -61,8 +61,24 @@ function buildAssetUrl(baseUrl: string, filename?: string) {
 }
 
 export const getStaticProps: GetStaticProps<{ catalogue: Catalogue }> = async () => {
-  const cataloguePath = path.join(process.cwd(), "..", "shared", "data_catalogue.json")
-  const raw = await fs.readFile(cataloguePath, "utf8")
+  const candidates = [
+    path.join(process.cwd(), "..", "shared", "data_catalogue.json"),
+    path.join(process.cwd(), "data", "data_catalogue.json"),
+  ]
+  let raw: string | undefined
+  for (const candidate of candidates) {
+    try {
+      raw = await fs.readFile(candidate, "utf8")
+      break
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+        throw error
+      }
+    }
+  }
+  if (!raw) {
+    throw new Error("data_catalogue.json was not found")
+  }
   const catalogue = JSON.parse(raw) as Catalogue
 
   return {
